@@ -1,6 +1,9 @@
 html, body {
   background-color: white; 
 }
+li {
+  list-style: none;
+}
 .project {
   display: flex;
   flex-direction: column;

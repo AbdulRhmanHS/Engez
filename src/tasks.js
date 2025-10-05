@@ -50,5 +50,6 @@ export function addTask(name) {
 
 export function addProject(name) {
     const newProject = new project(name);
+    projects.push(newProject);
     return newProject;
 }
