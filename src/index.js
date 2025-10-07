@@ -11,6 +11,11 @@ function createTaskElement(task) {
 
   const checkBox = document.createElement("input");
   checkBox.type = "checkbox";
+  checkBox.checked = task.completed;
+  checkBox.addEventListener("change", () => {
+    task.completed = checkBox.checked;
+    console.log(tasks.getProjects());
+  });
 
   taskElement.appendChild(checkBox);
   taskElement.appendChild(document.createTextNode(" " + task.name));
