@@ -7,7 +7,7 @@ const taskArea = document.querySelector(".task-area");
 function createTaskElement(task) {
   const taskElement = document.createElement("li");
   taskElement.classList.add("task");
-  taskElement.taskObj = task;
+  taskElement.taskObj = task; // Link the task object to the task element
 
   const checkBox = document.createElement("input");
   checkBox.type = "checkbox";
@@ -21,7 +21,7 @@ function createTaskElement(task) {
 function createProjectElement(project) {
   const projectElement = document.createElement("div");
   projectElement.classList.add("project");
-  projectElement.projectObj = project;
+  projectElement.projectObj = project; // Link the project object to the project element
 
   const projectName = document.createElement("p");
   projectName.textContent = project.name;
@@ -53,8 +53,6 @@ function createProjectElement(project) {
   projectBody.append(inputField, addTaskButton);
   projectElement.append(projectName, projectBody);
   taskArea.appendChild(projectElement);
-
-  return projectElement;
 }
 
 function addTasktoScreen(input, projectElement) {

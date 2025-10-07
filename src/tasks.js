@@ -1,4 +1,6 @@
-class project {
+const projects = []; // Array to store projects
+
+class Project {
     constructor(name) {
         this.name = name;
         this.tasks = [];
@@ -30,8 +32,32 @@ class project {
             }
         });
     }
+
+    static getUniqueName(baseName) { // Prevent Duplicate names
+        // Filter only projects starting with the same base name
+        const similar = projects
+        .map(p => p.name)
+        .filter(name => name.startsWith(baseName));
+
+        if (similar.length === 0) return baseName;
+
+        // Extract numbers from names like "Default Project (2)"
+        let maxNumber = 1;
+        similar.forEach(name => {
+        const match = name.match(/\((\d+)\)$/);
+        if (match) {
+            const num = parseInt(match[1]);
+            if (num > maxNumber) maxNumber = num;
+        } else if (name === baseName) {
+            // plain base name counts as (1)
+            maxNumber = Math.max(maxNumber, 1);
+        }
+        });
+
+        return `${baseName} (${maxNumber + 1})`;
+    }
 }
-class task {
+class Task {
     constructor(name) {
         this.name = name
         this.completed = false;
@@ -43,13 +69,17 @@ export function addTask(name) {
         return;
     }
     else {
-        const newTask = new task(name);
-        return newTask;
+        return new Task(name);
     }
 }
 
 export function addProject(name) {
-    const newProject = new project(name);
+    const uniqueName = Project.getUniqueName(name);
+    const newProject = new Project(uniqueName);
     projects.push(newProject);
     return newProject;
+}
+
+export function getProjects() {
+  return projects;
 }
