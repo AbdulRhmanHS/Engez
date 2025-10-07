@@ -4,7 +4,7 @@ import * as tasks from "./tasks"
 const newProjectButton = document.getElementById("new-project");
 const taskArea = document.querySelector(".task-area");
 
-function createTaskElement(task) {
+function createTaskElement(task, projectObj) {
   const taskElement = document.createElement("li");
   taskElement.classList.add("task");
   taskElement.taskObj = task; // Link the task object to the task element
@@ -14,11 +14,41 @@ function createTaskElement(task) {
   checkBox.checked = task.completed;
   checkBox.addEventListener("change", () => {
     task.completed = checkBox.checked;
-    console.log(tasks.getProjects());
   });
 
-  taskElement.appendChild(checkBox);
-  taskElement.appendChild(document.createTextNode(" " + task.name));
+  const nameSpan = document.createElement("span");
+  nameSpan.textContent = " " + task.name + " ";
+
+  const menuButton = document.createElement("button");
+  menuButton.classList.add("task-menu-btn");
+  menuButton.textContent = "⋮";
+
+  const menu = document.createElement("ul");
+  menu.classList.add("task-menu");
+  menu.style.display = "none";
+
+  // Toggle menu visibility
+  menuButton.addEventListener("click", (event) => {
+    event.stopPropagation(); // Prevent bubbling up
+
+    // Close all other open menus first
+    document.querySelectorAll(".task-menu").forEach(otherMenu => {
+      if (otherMenu !== menu) otherMenu.style.display = "none";
+    });
+
+    // Toggle this task's menu
+    menu.style.display = menu.style.display === "none" ? "block" : "none";
+  });
+
+  const deleteOption = document.createElement("li");
+  deleteOption.textContent = "Delete";
+  deleteOption.addEventListener("click", () => {
+    deleteTask(projectObj, taskElement);
+    menu.style.display = "none";
+  });
+
+  menu.appendChild(deleteOption);
+  taskElement.append(checkBox, nameSpan, menuButton, menu);
 
   return taskElement;
 }
@@ -67,7 +97,7 @@ function addTasktoScreen(input, projectElement) {
   else {
     // Create the task
     const task = tasks.addTask(input.value);
-    const taskElement = createTaskElement(task);
+    const taskElement = createTaskElement(task, projectElement.projectObj);
 
     // Add the task to the project
     projectElement.projectObj.appendTask(task);
@@ -79,6 +109,11 @@ function addTasktoScreen(input, projectElement) {
 function addProjecttoScreen() {
   const project = tasks.addProject("Default Project");
   createProjectElement(project);
+}
+
+function deleteTask(projectObj, taskElement) {
+  projectObj.deleteTaskObj(taskElement.taskObj);
+  taskElement.remove();
 }
 
 newProjectButton.addEventListener("click", addProjecttoScreen) // Add a new project
