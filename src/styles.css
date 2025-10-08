@@ -7,15 +7,18 @@ html, body {
   width: 100%;
   font-family: "Open Sans", sans-serif;
 }
+
 li {
   list-style: none;
 }
+
 .task-area {
   display: flex;
   flex-direction: column;
   align-items: center;
   width: 100%
 }
+
 .project {
   display: flex;
   flex-direction: column;

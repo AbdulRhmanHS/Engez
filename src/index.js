@@ -61,7 +61,7 @@ function createProjectElement(project) {
   const projectName = document.createElement("p");
   projectName.textContent = project.name;
   projectName.contentEditable = true;
-  project.changeableName(projectName);
+  projectEditableName(project, projectName);
   projectName.classList.add("project-name");
 
   const projectBody = document.createElement("div");
@@ -109,6 +109,33 @@ function addTasktoScreen(input, projectElement) {
 function addProjecttoScreen() {
   const project = tasks.addProject("Default Project");
   createProjectElement(project);
+}
+
+function projectEditableName(project, projectNameElement) {
+  let previousName = project.name;
+
+  // Change name with the text input
+  projectNameElement.addEventListener("input", (e) => {
+    project.name = e.target.textContent;
+  });
+
+  // Make the name reset when it's empty
+  projectNameElement.addEventListener("blur", () => {
+    const success = project.setName(project.name);
+    if (!success) {
+      project.name = previousName;
+      projectNameElement.textContent = previousName;
+    } else {
+      previousName = project.name;
+    }
+  });
+
+  projectNameElement.addEventListener("keydown", (e) => {
+    if (e.key === "Enter") {
+      e.preventDefault(); // Prevent Enter key from making a new line
+      projectNameElement.blur(); // Make Enter key assign the new name
+    }
+  });
 }
 
 function deleteTask(projectObj, taskElement) {

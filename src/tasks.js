@@ -10,27 +10,10 @@ class Project {
         this.tasks.push(task);
     }
 
-    changeableName(projectNameElement) {
-        
-        // Change name with typing
-        projectNameElement.addEventListener("input", (event) => {
-            this.name = event.target.textContent
-        });
-
-        // Reset the default name when empty
-        projectNameElement.addEventListener("blur", () => {
-            if (this.name === "") {
-            this.name = "Default Project";
-            projectNameElement.textContent = this.name;
-            }
-        });
-
-        // Prevent enter key from making a new line
-        projectNameElement.addEventListener("keydown", (event) => {
-            if (event.key === "Enter") {
-            event.preventDefault();
-            }
-        });
+    setName(newName) {
+        if (newName.trim() === "") return false; // Invalid input (empty or just spaces)
+        this.name = newName.trim(); // Clean up whitespace and save it
+        return true;
     }
 
     deleteTaskObj(task) {
