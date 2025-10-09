@@ -10,12 +10,6 @@ class Project {
         this.tasks.push(task);
     }
 
-    setName(newName) {
-        if (newName.trim() === "") return false; // Invalid input (empty or just spaces)
-        this.name = newName.trim(); // Clean up whitespace and save it
-        return true;
-    }
-
     deleteTaskObj(task) {
         const i = this.tasks.indexOf(task);
         if (i !== -1) this.tasks.splice(i, 1);

@@ -11,12 +11,14 @@ function createTaskElement(task, projectObj) {
 
   const checkBox = document.createElement("input");
   checkBox.type = "checkbox";
+  checkBox.classList.add("check-box");
   checkBox.checked = task.completed;
   checkBox.addEventListener("change", () => {
     task.completed = checkBox.checked;
   });
 
   const nameSpan = document.createElement("span");
+  nameSpan.classList.add("task-name");
   nameSpan.textContent = " " + task.name + " ";
 
   const menuButton = document.createElement("button");
@@ -48,7 +50,14 @@ function createTaskElement(task, projectObj) {
     menu.style.display = "none";
   });
 
-  menu.appendChild(deleteOption);
+  const editOption = document.createElement("li");
+  editOption.textContent = "Edit";
+  editOption.addEventListener("click", () => {
+    showEditMenu(taskElement);
+    menu.style.display = "none";
+  });
+
+  menu.append(editOption, deleteOption);
   taskElement.append(checkBox, nameSpan, menuButton, menu);
 
   return taskElement;
@@ -60,10 +69,9 @@ function createProjectElement(project) {
   projectElement.projectObj = project; // Link the project object to the project element
 
   const projectName = document.createElement("p");
+  projectName.classList.add("project-name");
   projectName.textContent = project.name;
   projectName.contentEditable = true;
-  projectEditableName(project, projectName);
-  projectName.classList.add("project-name");
 
   const projectBody = document.createElement("div");
   projectBody.classList.add("project-body");
@@ -89,6 +97,7 @@ function createProjectElement(project) {
   projectBody.append(inputField, addTaskButton);
   projectElement.append(projectName, projectBody);
   taskArea.appendChild(projectElement);
+  makeEditable(projectName, project);
 }
 
 function addTasktoScreen(input, projectElement) {
@@ -135,31 +144,67 @@ function getUniqueName(baseName) {
     return `${baseName} (${maxNumber + 1})`;
 }
 
-function projectEditableName(project, projectNameElement) {
-  let previousName = project.name;
+function makeEditable(editableEl, targetObj, property = "name") {
+  let previousValue = targetObj[property];
 
-  // Change name with the text input
-  projectNameElement.addEventListener("input", (e) => {
-    project.name = e.target.textContent;
+  // Update the object as user types
+  editableEl.addEventListener("input", (e) => {
+    targetObj[property] = e.target.textContent;
   });
 
-  // Make the name reset when it's empty
-  projectNameElement.addEventListener("blur", () => {
-    const success = project.setName(project.name);
-    if (!success) {
-      project.name = previousName;
-      projectNameElement.textContent = previousName;
+  // Restore last valid value if field is empty
+  editableEl.addEventListener("blur", () => {
+    const trimmed = targetObj[property].trim();
+
+    if (trimmed === "") {
+      targetObj[property] = previousValue;
+      editableEl.textContent = previousValue;
     } else {
-      previousName = project.name;
+      targetObj[property] = trimmed;
+      previousValue = trimmed;
     }
   });
 
-  projectNameElement.addEventListener("keydown", (e) => {
+  // Prevent new lines, confirm edit with Enter
+  editableEl.addEventListener("keydown", (e) => {
     if (e.key === "Enter") {
-      e.preventDefault(); // Prevent Enter key from making a new line
-      projectNameElement.blur(); // Make Enter key assign the new name
+      e.preventDefault();
+      if (editableEl.textContent.trim() !== "") editableEl.blur();
     }
   });
+}
+
+function showEditMenu(taskElement) {
+  const dialog = document.createElement("dialog");
+  dialog.classList.add("task-edit");
+
+  const taskNameEl = taskElement.querySelector(".task-name");
+
+  const chekBox = taskElement.querySelector(".check-box")
+
+  const name = document.createElement("span");
+  name.textContent = taskElement.taskObj.name;
+  name.contentEditable = true;
+  makeEditable(name, taskElement.taskObj);
+
+  const markAsComplete = document.createElement("button");
+  markAsComplete.textContent = "Mark as complete";
+  markAsComplete.addEventListener("click", () => {
+    taskElement.taskObj.completed = true;
+    chekBox.checked = true;
+    dialog.close();
+  });
+
+  const close = document.createElement("button");
+  close.textContent = "Close";
+  close.addEventListener("click", () => {
+    taskNameEl.textContent = taskElement.taskObj.name;
+    dialog.close();
+  });
+
+  dialog.append(name, markAsComplete, close);
+  document.body.appendChild(dialog);
+  dialog.showModal();
 }
 
 newProjectButton.addEventListener("click", addProjecttoScreen) // Add a new project
