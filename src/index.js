@@ -187,6 +187,13 @@ function showEditMenu(taskElement) {
   name.contentEditable = true;
   makeEditable(name, taskElement.taskObj);
 
+  const note = document.createElement("textarea");
+  note.placeholder = "Note";
+  note.value = taskElement.taskObj.note;
+  note.addEventListener("input", () => {
+    taskElement.taskObj.note = note.value;
+  });
+
   const markAsComplete = document.createElement("button");
   markAsComplete.textContent = "Mark as complete";
   markAsComplete.addEventListener("click", () => {
@@ -202,7 +209,7 @@ function showEditMenu(taskElement) {
     dialog.close();
   });
 
-  dialog.append(name, markAsComplete, close);
+  dialog.append(name, note, markAsComplete, close);
   document.body.appendChild(dialog);
   dialog.showModal();
 }
