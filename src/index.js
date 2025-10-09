@@ -43,7 +43,8 @@ function createTaskElement(task, projectObj) {
   const deleteOption = document.createElement("li");
   deleteOption.textContent = "Delete";
   deleteOption.addEventListener("click", () => {
-    deleteTask(projectObj, taskElement);
+    projectObj.deleteTaskObj(task);
+    taskElement.remove();
     menu.style.display = "none";
   });
 
@@ -107,8 +108,31 @@ function addTasktoScreen(input, projectElement) {
 }
 
 function addProjecttoScreen() {
-  const project = tasks.addProject("Default Project");
+  const project = tasks.addProject(getUniqueName("Default Project"));
   createProjectElement(project);
+}
+
+// Prevent Duplicate names
+function getUniqueName(baseName) {
+    // Filter only project names starting with the same base name
+    const similar = tasks.getProjects().map(p => p.name).filter(name => name.startsWith(baseName));
+
+    if (similar.length === 0) return baseName;
+
+    // Extract numbers from names like "Default Project (2)"
+    let maxNumber = 1;
+    similar.forEach(name => {
+      const match = name.match(/\((\d+)\)$/);
+      if (match) {
+          const num = parseInt(match[1]);
+          if (num > maxNumber) maxNumber = num;
+      } else if (name === baseName) {
+          // plain base name counts as (1)
+          maxNumber = Math.max(maxNumber, 1);
+      }
+    });
+
+    return `${baseName} (${maxNumber + 1})`;
 }
 
 function projectEditableName(project, projectNameElement) {
@@ -136,11 +160,6 @@ function projectEditableName(project, projectNameElement) {
       projectNameElement.blur(); // Make Enter key assign the new name
     }
   });
-}
-
-function deleteTask(projectObj, taskElement) {
-  projectObj.deleteTaskObj(taskElement.taskObj);
-  taskElement.remove();
 }
 
 newProjectButton.addEventListener("click", addProjecttoScreen) // Add a new project
