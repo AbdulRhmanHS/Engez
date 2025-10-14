@@ -16,7 +16,7 @@ li {
   display: flex;
   flex-direction: column;
   align-items: center;
-  width: 100%
+  width: 100%;
 }
 
 .project {
@@ -33,6 +33,9 @@ li {
 }
 
 .project-body {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
   width: 100%;
   min-height: fit-content;
   font-size: 18px;
@@ -41,7 +44,23 @@ li {
   padding: 10px 0;
 }
 
+.project-input {
+  display: flex;
+  gap: 5px;
+}
+
+.project-task-list {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
 .task {
+  display: flex;
+  flex-direction: column;
+}
+
+.task-info {
   position: relative;
   display: flex;
   align-items: center;
@@ -77,4 +96,17 @@ li {
 
 .task-menu li:hover {
   background-color: #a7a7a7;
+}
+
+.sub-task-list {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+  margin-left: 15px;
+}
+
+.subtask-arrow {
+  cursor: pointer;
+  user-select: none;
+  margin-right: 4px;
 }

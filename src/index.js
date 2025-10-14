@@ -4,6 +4,8 @@ import * as tasks from "./tasks"
 const newProjectButton = document.getElementById("new-project");
 const taskArea = document.querySelector(".task-area");
 
+
+
 function createTaskElement(task, projectObj) {
   const taskElement = document.createElement("li");
   taskElement.classList.add("task");
@@ -28,7 +30,7 @@ function createTaskElement(task, projectObj) {
   const menu = document.createElement("ul");
   menu.classList.add("task-menu");
   menu.style.display = "none";
-
+  
   // Toggle menu visibility
   menuButton.addEventListener("click", (event) => {
     event.stopPropagation(); // Prevent bubbling up
@@ -56,12 +58,18 @@ function createTaskElement(task, projectObj) {
     showEditMenu(taskElement);
     menu.style.display = "none";
   });
+  
+  const taskInfo = document.createElement("div");
+  taskInfo.classList.add("task-info");
 
   menu.append(editOption, deleteOption);
-  taskElement.append(checkBox, nameSpan, menuButton, menu);
+  taskInfo.append(checkBox, nameSpan, menuButton, menu);
+  taskElement.append(taskInfo);
 
   return taskElement;
 }
+
+
 
 function createProjectElement(project) {
   const projectElement = document.createElement("div");
@@ -94,11 +102,20 @@ function createProjectElement(project) {
     addTasktoScreen(inputField, projectElement);
   });
 
-  projectBody.append(inputField, addTaskButton);
+  const projectInput = document.createElement("div");
+  projectInput.classList.add("project-input");
+
+  const projectTaskList = document.createElement("div");
+  projectTaskList.classList.add("project-task-list");
+
+  projectInput.append(inputField, addTaskButton);
+  projectBody.append(projectInput, projectTaskList);
   projectElement.append(projectName, projectBody);
   taskArea.appendChild(projectElement);
   makeEditable(projectName, project);
 }
+
+
 
 function addTasktoScreen(input, projectElement) {
   if (input.value == "") {
@@ -111,15 +128,19 @@ function addTasktoScreen(input, projectElement) {
 
     // Add the task to the project
     projectElement.projectObj.appendTask(task);
-    projectElement.querySelector(".project-body").appendChild(taskElement);
+    projectElement.querySelector(".project-body").querySelector(".project-task-list").appendChild(taskElement);
     input.value = "";
   }
 }
+
+
 
 function addProjecttoScreen() {
   const project = tasks.addProject(getUniqueName("Default Project"));
   createProjectElement(project);
 }
+
+
 
 // Prevent Duplicate names
 function getUniqueName(baseName) {
@@ -143,6 +164,8 @@ function getUniqueName(baseName) {
 
     return `${baseName} (${maxNumber + 1})`;
 }
+
+
 
 function makeEditable(editableEl, targetObj, property = "name") {
   let previousValue = targetObj[property];
@@ -174,12 +197,13 @@ function makeEditable(editableEl, targetObj, property = "name") {
   });
 }
 
+
+
 function showEditMenu(taskElement) {
   const dialog = document.createElement("dialog");
   dialog.classList.add("task-edit");
 
   const taskNameEl = taskElement.querySelector(".task-name");
-
   const chekBox = taskElement.querySelector(".check-box")
 
   const name = document.createElement("span");
@@ -202,16 +226,136 @@ function showEditMenu(taskElement) {
     dialog.close();
   });
 
+  const addSubTaskButton = document.createElement("button");
+  addSubTaskButton.textContent = "Add a sub-task";
+  addSubTaskButton.addEventListener("click", () => {
+    const subTaskObj = taskElement.taskObj.addSubTask("Sub-task name");
+    addSubTaskToScreen(subTaskObj, dialog);
+  });
+
   const close = document.createElement("button");
   close.textContent = "Close";
   close.addEventListener("click", () => {
-    taskNameEl.textContent = taskElement.taskObj.name;
+    taskNameEl.textContent = taskElement.taskObj.name; // Save task name
+
+    // Clear the old subtasks first
+    const existingList = taskElement.querySelector(".sub-task-list");
+    if (existingList) existingList.innerHTML = "";
+
+    // Rebuild subtasks in main window
+    taskElement.taskObj.subTasks.forEach(subTask => {
+      addSubTaskToScreen(subTask, taskElement);
+    });
+
     dialog.close();
   });
 
-  dialog.append(name, note, markAsComplete, close);
+  dialog.append(name, note, addSubTaskButton, markAsComplete, close);
+
+  // repopulate sub-tasks if any exist
+  taskElement.taskObj.subTasks.forEach(subTask => {
+    const subTaskEl = createSubTask(subTask);
+    dialog.append(subTaskEl);
+  });
+
   document.body.appendChild(dialog);
   dialog.showModal();
 }
 
+
+
+function createSubTask(subTaskObj) {
+  const subTask = document.createElement("div");
+  subTask.classList.add("sub-task");
+
+  const subTaskCheck = document.createElement("input");
+  subTaskCheck.type = "checkbox";
+  subTaskCheck.checked = subTaskObj.completed;
+  subTaskCheck.addEventListener("change", () => {
+    subTaskObj.completed = subTaskCheck.checked;
+  });
+
+  const subTaskName = document.createElement("span");
+  subTaskName.textContent = subTaskObj.name;
+  subTaskName.contentEditable = false;
+  subTaskName.addEventListener("click", () => {
+    subTaskName.contentEditable = true;
+    subTaskName.focus();
+  });
+  subTaskName.addEventListener("input", (e) => { // Change the name when editing
+    subTaskObj.name = e.target.textContent;
+  });
+  subTaskName.addEventListener("keydown", (e) => {
+    if (e.key === "Enter") {
+      e.preventDefault();
+      subTaskName.contentEditable = false;
+    }
+  });
+  // remove subtask if cleared and loses focus
+  subTaskName.addEventListener("blur", () => {
+    const name = subTaskName.textContent.trim();
+    if (name === "") {
+      // remove from data
+      subTaskObj.parentTask.deleteSubTask(subTaskObj);
+
+      // remove from screen
+      subTaskName.parentElement.remove();
+    }
+  });
+
+  subTask.append(subTaskCheck, subTaskName);
+
+  return subTask
+}
+
+
+
+function addSubTaskToScreen(subTaskObj, container) {
+  // Create the subTask
+  const subTask = createSubTask(subTaskObj);
+
+  // Make the sub-tasks in a separate list
+  let subTaskList = container.querySelector(".sub-task-list");
+  if (!subTaskList) {
+    subTaskList = document.createElement("div");
+    subTaskList.classList.add("sub-task-list");
+    
+    // start hidden only outside the edit modal
+    if (!container.classList.contains("task-edit")) {
+      subTaskList.style.display = "none";
+    }
+    
+    container.append(subTaskList);
+
+    // For adding the collapsable arrow
+    if (container.classList.contains("task-edit")) {
+      const taskElement = Array.from(document.querySelectorAll(".task"))
+        .find(el => el.taskObj === subTaskObj.parentTask);
+        
+      const arrow = taskElement?.querySelector(".subtask-arrow");
+      if (!arrow && taskElement) {
+        const newArrow = document.createElement("span");
+        // default closed
+        newArrow.textContent = "▶";
+        newArrow.classList.add("subtask-arrow");
+        newArrow.addEventListener("click", () => {
+          const subTaskList = taskElement.querySelector(".sub-task-list");
+          const isHidden = subTaskList.style.display === "none";
+          subTaskList.style.display = isHidden ? "block" : "none";
+          newArrow.textContent = isHidden ? "▼" : "▶";
+        });
+        taskElement.querySelector(".task-info").prepend(newArrow);
+      }
+    }
+  }
+
+  // Link it to the same object
+  subTask.subTaskObj = subTaskObj;
+
+  subTaskList.append(subTask);
+}
+
+
+
 newProjectButton.addEventListener("click", addProjecttoScreen) // Add a new project
+window.getProjects = tasks.getProjects; // For testing only

@@ -16,11 +16,32 @@ class Project {
     }
 }
 
+class SubTask {
+    constructor(name, parentTask) {
+        this.name = name;
+        this.completed = false;
+        this.parentTask = parentTask;
+    }
+}
+
 class Task {
     constructor(name) {
         this.name = name
         this.completed = false;
         this.note = "";
+        this.subTasks = [];
+    }
+
+    addSubTask(name) {
+        if (!name.trim()) return;
+        const subTask = new SubTask(name, this);
+        this.subTasks.push(subTask);
+        return subTask;
+    }
+
+    deleteSubTask(subTask) {
+        const i = this.subTasks.indexOf(subTask);
+        if (i !== -1) this.subTasks.splice(i, 1);
     }
 }
 
