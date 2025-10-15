@@ -39,9 +39,9 @@ function createTaskInfo(task, projectObj, taskElement) {
 
   const checkBox = createCheckbox(task);
   const name = createName(task);
-  const menuButton = createMenuButton(task, projectObj, taskElement);
+  const menuWrapper = createMenuButton(task, projectObj, taskElement);
 
-  info.append(checkBox, name, menuButton);
+  info.append(checkBox, name, menuWrapper);
   return info;
 }
 
@@ -69,8 +69,11 @@ function createMenuButton(task, projectObj, taskElement) {
   const menu = buildMenu(task, projectObj, taskElement);
   btn.addEventListener("click", (e) => toggleMenu(e, menu));
 
-  btn.append(menu);
-  return btn;
+  const wrapper = document.createElement("div");
+  wrapper.classList.add("task-menu-wrapper");
+  wrapper.append(btn, menu);
+
+  return wrapper;
 }
 
 function buildMenu(task, projectObj, taskElement) {

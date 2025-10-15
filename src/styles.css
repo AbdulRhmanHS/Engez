@@ -1,47 +1,56 @@
+/* ---------- Base Styles ---------- */
+
 html, body {
-  background-color: white;
+  height: 100vh;
+  width: 100%;
   display: flex;
   flex-direction: column;
   align-items: center;
-  height: 100vh;
-  width: 100%;
+  background-color: #fff;
   font-family: "Open Sans", sans-serif;
+  color: #333;
+  margin: 0;
 }
 
 li {
   list-style: none;
 }
 
+
+/* ---------- Layout ---------- */
+
 .task-area {
+  width: 100%;
   display: flex;
   flex-direction: column;
   align-items: center;
-  width: 100%;
 }
 
 .project {
+  width: max(900px, 90%);
   display: flex;
   flex-direction: column;
-  width: max(900px, 90%);
-}
-
-.project-name {
-  font-size: 24px;
-  font-weight: bold;
-  color: #333;
-  margin: 10px 0;
+  gap: 10px;
 }
 
 .project-body {
+  width: 100%;
   display: flex;
   flex-direction: column;
   gap: 5px;
-  width: 100%;
-  min-height: fit-content;
-  font-size: 18px;
-  border-top: 2px solid #333;
-  color: #333;
   padding: 10px 0;
+  border-top: 2px solid #333;
+  font-size: 18px;
+  min-height: fit-content;
+}
+
+
+/* ---------- Project ---------- */
+
+.project-name {
+  font-size: 24px;
+  font-weight: 700;
+  margin: 10px 0;
 }
 
 .project-input {
@@ -55,6 +64,9 @@ li {
   gap: 5px;
 }
 
+
+/* ---------- Task ---------- */
+
 .task {
   display: flex;
   flex-direction: column;
@@ -67,46 +79,78 @@ li {
   gap: 8px;
 }
 
+.check-box {
+  cursor: pointer;
+}
+
+.task-name {
+  flex: 1;
+}
+
+.task-menu-wrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
 .task-menu-btn {
-  margin-left: auto;
   background: none;
   border: none;
   cursor: pointer;
   font-size: 18px;
+  padding: 4px;
 }
+
+
+/* ---------- Task Menu ---------- */
 
 .task-menu {
   position: absolute;
-  right: 0;
   top: 100%;
-  background-color: #bbbbbb;
-  color: black;
-  list-style: none;
+  right: 0;
   margin: 0;
   padding: 4px 0;
+  background-color: #bbb;
   border-radius: 6px;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.3);
-  z-index: 1;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+  z-index: 10;
+  display: none;
 }
 
 .task-menu li {
   padding: 6px 12px;
   cursor: pointer;
+  white-space: nowrap;
 }
 
 .task-menu li:hover {
   background-color: #a7a7a7;
 }
 
-.sub-task-list {
-  display: flex;
-  flex-direction: column;
-  gap: 1px;
-  margin-left: 15px;
-}
+
+/* ---------- Subtasks ---------- */
 
 .subtask-arrow {
   cursor: pointer;
   user-select: none;
   margin-right: 4px;
+}
+
+.sub-task-list {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  margin-left: 18px;
+  transition: all 0.2s ease;
+}
+
+
+/* ---------- Dialog / Edit ---------- */
+
+.task-edit {
+  padding: 20px;
+  border: none;
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25);
+  background-color: #f9f9f9;
 }
