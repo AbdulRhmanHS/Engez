@@ -1,89 +1,115 @@
-export function createSubTask(subTaskObj) {
-  const subTask = document.createElement("div");
-  subTask.classList.add("sub-task");
+/* ─── main entry ─────────────────────────────────────────── */
 
-  const subTaskCheck = document.createElement("input");
-  subTaskCheck.type = "checkbox";
-  subTaskCheck.checked = subTaskObj.completed;
-  subTaskCheck.addEventListener("change", () => {
-    subTaskObj.completed = subTaskCheck.checked;
-  });
+export function createSubTask(subTask) {
+  const el = document.createElement("div");
+  el.classList.add("sub-task");
 
-  const subTaskName = document.createElement("span");
-  subTaskName.textContent = subTaskObj.name;
-  subTaskName.contentEditable = false;
-  subTaskName.addEventListener("click", () => {
-    subTaskName.contentEditable = true;
-    subTaskName.focus();
-  });
-  subTaskName.addEventListener("input", (e) => { // Change the name when editing
-    subTaskObj.name = e.target.textContent;
-  });
-  subTaskName.addEventListener("keydown", (e) => {
-    if (e.key === "Enter") {
-      e.preventDefault();
-      subTaskName.contentEditable = false;
-    }
-  });
-  // remove subtask if cleared and loses focus
-  subTaskName.addEventListener("blur", () => {
-    const name = subTaskName.textContent.trim();
-    if (name === "") {
-      // remove from data
-      subTaskObj.parentTask.deleteSubTask(subTaskObj);
+  const check = createCheckbox(subTask);
+  const name = createNameField(subTask);
 
-      // remove from screen
-      subTaskName.parentElement.remove();
-    }
-  });
+  el.append(check, name);
+  el.subTaskObj = subTask;
 
-  subTask.append(subTaskCheck, subTaskName);
+  return el;
+}
 
-  return subTask
+export function addSubTaskToScreen(subTask, container) {
+  const list = ensureSubTaskList(container, subTask);
+  const el = createSubTask(subTask);
+  list.append(el);
 }
 
 
-export function addSubTaskToScreen(subTaskObj, container) {
-  // Create the subTask
-  const subTask = createSubTask(subTaskObj);
+/* ─── helpers ────────────────────────────────────────────── */
 
-  // Make the sub-tasks in a separate list
-  let subTaskList = container.querySelector(".sub-task-list");
-  if (!subTaskList) {
-    subTaskList = document.createElement("div");
-    subTaskList.classList.add("sub-task-list");
-    
-    // start hidden only outside the edit modal
+function createCheckbox(subTask) {
+  const check = document.createElement("input");
+  check.type = "checkbox";
+  check.checked = subTask.completed;
+
+  check.addEventListener("change", () => {
+    subTask.completed = check.checked;
+  });
+
+  return check;
+}
+
+function createNameField(subTask) {
+  const name = document.createElement("span");
+  name.textContent = subTask.name;
+
+  name.addEventListener("click", () => {
+    name.contentEditable = true;
+    name.focus();
+  });
+
+  name.addEventListener("input", (e) => {
+    subTask.name = e.target.textContent;
+  });
+
+  name.addEventListener("keydown", (e) => {
+    if (e.key === "Enter") {
+      e.preventDefault();
+      name.contentEditable = false;
+    }
+  });
+
+  name.addEventListener("blur", () => {
+    const trimmed = name.textContent.trim();
+    if (!trimmed) {
+      subTask.parentTask.deleteSubTask(subTask);
+      name.parentElement.remove();
+    } else {
+      name.contentEditable = false;
+    }
+  });
+
+  return name;
+}
+
+/* ─── subtask list management ───────────────────────────── */
+
+function ensureSubTaskList(container, subTask) {
+  let list = container.querySelector(".sub-task-list");
+
+  if (!list) {
+    list = document.createElement("div");
+    list.classList.add("sub-task-list");
+
+    // hidden by default (except in modal)
     if (!container.classList.contains("task-edit")) {
-      subTaskList.style.display = "none";
+      list.style.display = "none";
     }
-    
-    container.append(subTaskList);
 
-    // For adding the collapsable arrow
-    if (container.classList.contains("task-edit")) {
-      const taskElement = Array.from(document.querySelectorAll(".task"))
-        .find(el => el.taskObj === subTaskObj.parentTask);
-        
-      const arrow = taskElement?.querySelector(".subtask-arrow");
-      if (!arrow && taskElement) {
-        const newArrow = document.createElement("span");
-        // default closed
-        newArrow.textContent = "▶";
-        newArrow.classList.add("subtask-arrow");
-        newArrow.addEventListener("click", () => {
-          const subTaskList = taskElement.querySelector(".sub-task-list");
-          const isHidden = subTaskList.style.display === "none";
-          subTaskList.style.display = isHidden ? "block" : "none";
-          newArrow.textContent = isHidden ? "▼" : "▶";
-        });
-        taskElement.querySelector(".task-info").prepend(newArrow);
-      }
-    }
+    container.append(list);
+    maybeAddArrow(container, subTask);
   }
 
-  // Link it to the same object
-  subTask.subTaskObj = subTaskObj;
+  return list;
+}
 
-  subTaskList.append(subTask);
+function maybeAddArrow(container, subTask) {
+  if (!container.classList.contains("task-edit")) return;
+
+  const taskEl = findTaskElement(subTask);
+  if (!taskEl || taskEl.querySelector(".subtask-arrow")) return;
+
+  const arrow = document.createElement("span");
+  arrow.textContent = "▶";
+  arrow.classList.add("subtask-arrow");
+
+  arrow.addEventListener("click", () => {
+    const list = taskEl.querySelector(".sub-task-list");
+    const hidden = list.style.display === "none";
+    list.style.display = hidden ? "block" : "none";
+    arrow.textContent = hidden ? "▼" : "▶";
+  });
+
+  taskEl.querySelector(".task-info").prepend(arrow);
+}
+
+function findTaskElement(subTask) {
+  return Array.from(document.querySelectorAll(".task")).find(
+    (el) => el.taskObj === subTask.parentTask
+  );
 }

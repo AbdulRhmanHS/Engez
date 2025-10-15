@@ -1,83 +1,111 @@
-import * as data from "../core/data"
+import * as data from "../core/data";
 import { showEditMenu } from "./editMenu";
 
 
+/* ------------ Public API ------------ */
+
+export function addTasktoScreen(input, projectElement) {
+  const name = input.value.trim();
+  if (!name) return;
+
+  const task = data.addTask(name);
+  const taskElement = createTaskElement(task, projectElement.projectObj);
+
+  projectElement.projectObj.appendTask(task);
+
+  const taskList = projectElement.querySelector(".project-task-list");
+  taskList.appendChild(taskElement);
+
+  input.value = "";
+}
+
 export function createTaskElement(task, projectObj) {
-  const taskElement = document.createElement("li");
-  taskElement.classList.add("task");
-  taskElement.taskObj = task; // Link the task object to the task element
+  const el = document.createElement("li");
+  el.classList.add("task");
+  el.taskObj = task;
 
-  const checkBox = document.createElement("input");
-  checkBox.type = "checkbox";
-  checkBox.classList.add("check-box");
-  checkBox.checked = task.completed;
-  checkBox.addEventListener("change", () => {
-    task.completed = checkBox.checked;
-  });
+  const info = createTaskInfo(task, projectObj, el);
+  el.append(info);
 
-  const nameSpan = document.createElement("span");
-  nameSpan.classList.add("task-name");
-  nameSpan.textContent = " " + task.name + " ";
+  return el;
+}
 
-  const menuButton = document.createElement("button");
-  menuButton.classList.add("task-menu-btn");
-  menuButton.textContent = "⋮";
 
+/* ------------ Internal Helpers ------------ */
+
+function createTaskInfo(task, projectObj, taskElement) {
+  const info = document.createElement("div");
+  info.classList.add("task-info");
+
+  const checkBox = createCheckbox(task);
+  const name = createName(task);
+  const menuButton = createMenuButton(task, projectObj, taskElement);
+
+  info.append(checkBox, name, menuButton);
+  return info;
+}
+
+function createCheckbox(task) {
+  const box = document.createElement("input");
+  box.type = "checkbox";
+  box.classList.add("check-box");
+  box.checked = task.completed;
+  box.addEventListener("change", () => (task.completed = box.checked));
+  return box;
+}
+
+function createName(task) {
+  const name = document.createElement("span");
+  name.classList.add("task-name");
+  name.textContent = ` ${task.name} `;
+  return name;
+}
+
+function createMenuButton(task, projectObj, taskElement) {
+  const btn = document.createElement("button");
+  btn.classList.add("task-menu-btn");
+  btn.textContent = "⋮";
+
+  const menu = buildMenu(task, projectObj, taskElement);
+  btn.addEventListener("click", (e) => toggleMenu(e, menu));
+
+  btn.append(menu);
+  return btn;
+}
+
+function buildMenu(task, projectObj, taskElement) {
   const menu = document.createElement("ul");
   menu.classList.add("task-menu");
   menu.style.display = "none";
-  
-  // Toggle menu visibility
-  menuButton.addEventListener("click", (event) => {
-    event.stopPropagation(); // Prevent bubbling up
 
-    // Close all other open menus first
-    document.querySelectorAll(".task-menu").forEach(otherMenu => {
-      if (otherMenu !== menu) otherMenu.style.display = "none";
-    });
-
-    // Toggle this task's menu
-    menu.style.display = menu.style.display === "none" ? "block" : "none";
+  const edit = document.createElement("li");
+  edit.textContent = "Edit";
+  edit.addEventListener("click", () => {
+    showEditMenu(taskElement);
+    menu.style.display = "none";
   });
 
-  const deleteOption = document.createElement("li");
-  deleteOption.textContent = "Delete";
-  deleteOption.addEventListener("click", () => {
+  const del = document.createElement("li");
+  del.textContent = "Delete";
+  del.addEventListener("click", () => {
     projectObj.deleteTaskObj(task);
     taskElement.remove();
     menu.style.display = "none";
   });
 
-  const editOption = document.createElement("li");
-  editOption.textContent = "Edit";
-  editOption.addEventListener("click", () => {
-    showEditMenu(taskElement);
-    menu.style.display = "none";
-  });
-  
-  const taskInfo = document.createElement("div");
-  taskInfo.classList.add("task-info");
-
-  menu.append(editOption, deleteOption);
-  taskInfo.append(checkBox, nameSpan, menuButton, menu);
-  taskElement.append(taskInfo);
-
-  return taskElement;
+  menu.append(edit, del);
+  return menu;
 }
 
+function toggleMenu(event, menu) {
+  event.stopPropagation();
 
-export function addTasktoScreen(input, projectElement) {
-  if (input.value == "") {
-    return;
-  }
-  else {
-    // Create the task
-    const task = data.addTask(input.value);
-    const taskElement = createTaskElement(task, projectElement.projectObj);
+  // close others
+  document.querySelectorAll(".task-menu").forEach((m) => {
+    if (m !== menu) m.style.display = "none";
+  });
 
-    // Add the task to the project
-    projectElement.projectObj.appendTask(task);
-    projectElement.querySelector(".project-body").querySelector(".project-task-list").appendChild(taskElement);
-    input.value = "";
-  }
+  // toggle this one
+  const open = menu.style.display === "block";
+  menu.style.display = open ? "none" : "block";
 }
