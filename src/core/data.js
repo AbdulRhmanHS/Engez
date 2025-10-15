@@ -1,5 +1,6 @@
 const projects = []; // Array to store projects
 
+
 class Project {
     constructor(name) {
         this.name = name;
@@ -16,6 +17,7 @@ class Project {
     }
 }
 
+
 class SubTask {
     constructor(name, parentTask) {
         this.name = name;
@@ -23,6 +25,7 @@ class SubTask {
         this.parentTask = parentTask;
     }
 }
+
 
 class Task {
     constructor(name) {
@@ -45,6 +48,7 @@ class Task {
     }
 }
 
+
 export function addTask(name) {
     if (name == "") {
         return;
@@ -54,11 +58,13 @@ export function addTask(name) {
     }
 }
 
+
 export function addProject(name) {
     const newProject = new Project(name);
     projects.push(newProject);
     return newProject;
 }
+
 
 export function getProjects() {
   return projects;
