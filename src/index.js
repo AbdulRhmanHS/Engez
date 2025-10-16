@@ -1,5 +1,5 @@
-import "./styles.css"
-import * as data from "./core/data"
+import "./styles.css";
+import * as data from "./core/data";
 import { addProjecttoScreen } from "./dom/projectUI";
 
 

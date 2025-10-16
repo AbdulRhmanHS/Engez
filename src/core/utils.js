@@ -1,4 +1,4 @@
-import * as data from "./data"
+import * as data from "./data";
 
 
 export function getUniqueName(baseName) {
