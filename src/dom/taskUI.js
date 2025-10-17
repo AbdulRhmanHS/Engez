@@ -30,6 +30,18 @@ export function createTaskElement(task, projectObj) {
   return el;
 }
 
+export function ensureCompletion(taskEl) {
+  const subElements = Array.from(taskEl.querySelectorAll(".sub-task"));
+  subElements.forEach(el => {
+    if (el && taskEl.taskObj.completed === true) {
+      el.subTaskObj.completed = true;
+      el.querySelector(".sub-check").checked = true;
+    } else {
+      el.subTaskObj.completed = false;
+      el.querySelector(".sub-check").checked = false;
+    }
+  });
+}
 
 /* ------------ Internal Helpers ------------ */
 
@@ -114,17 +126,4 @@ function toggleMenu(event, menu) {
   // toggle this one
   const open = menu.style.display === "block";
   menu.style.display = open ? "none" : "block";
-}
-
-function ensureCompletion(taskElement) {
-  const subElements = Array.from(taskElement.querySelectorAll(".sub-task"));
-  subElements.forEach(el => {
-    if (el && taskElement.taskObj.completed === true) {
-      el.subTaskObj.completed = true;
-      el.querySelector(".sub-check").checked = true;
-    } else {
-      el.subTaskObj.completed = false;
-      el.querySelector(".sub-check").checked = false;
-    }
-  });
 }

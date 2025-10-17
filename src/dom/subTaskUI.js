@@ -1,11 +1,11 @@
-/* ─── main entry ─────────────────────────────────────────── */
+/* ------------ Public API ------------ */
 
 export function createSubTask(subTask) {
   const el = document.createElement("div");
   el.classList.add("sub-task");
   el.subTaskObj = subTask;
 
-  const check = createCheckbox(el);
+  const check = createCheckbox(subTask);
   const name = createNameField(subTask);
 
   el.append(check, name);
@@ -20,17 +20,17 @@ export function addSubTaskToScreen(subTask, container) {
 }
 
 
-/* ─── helpers ────────────────────────────────────────────── */
+/* ------------ Internal Helpers ------------ */
 
-function createCheckbox(subElement) {
+function createCheckbox(subTask) {
   const check = document.createElement("input");
   check.classList.add("sub-check");
   check.type = "checkbox";
-  check.checked = subElement.subTaskObj.completed;
+  check.checked = subTask.completed;
 
   check.addEventListener("change", () => {
-    subElement.subTaskObj.completed = check.checked;
-    ensureCompletion(subElement);
+    subTask.completed = check.checked;
+    ensureCompletion(subTask);
   });
 
   return check;
@@ -68,8 +68,6 @@ function createNameField(subTask) {
 
   return name;
 }
-
-/* ─── subtask list management ───────────────────────────── */
 
 function ensureSubTaskList(container, subTask) {
   let list = container.querySelector(".sub-task-list");
@@ -116,17 +114,17 @@ function findTaskElement(subTask) {
   );
 }
 
-function ensureCompletion(subElement) {
-  const taskElement = subElement.parentElement.parentElement;
-  const subElements = Array.from(taskElement.querySelectorAll(".sub-task"));
+function ensureCompletion(subTask) {
+  const taskEl = findTaskElement(subTask);
+  const subElements = Array.from(taskEl.querySelectorAll(".sub-task"));
   let isChecked = false;
   if (subElements.every(el => el.subTaskObj.completed === true)) isChecked = true;
 
   if (isChecked) {
-    taskElement.taskObj.completed = true;
-    taskElement.querySelector(".task-info").querySelector(".check-box").checked = true;
+    taskEl.taskObj.completed = true;
+    taskEl.querySelector(".task-info").querySelector(".check-box").checked = true;
   } else {
-    taskElement.taskObj.completed = false;
-    taskElement.querySelector(".task-info").querySelector(".check-box").checked = false;
+    taskEl.taskObj.completed = false;
+    taskEl.querySelector(".task-info").querySelector(".check-box").checked = false;
   }
 }

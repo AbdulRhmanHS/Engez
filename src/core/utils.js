@@ -1,9 +1,9 @@
-import * as data from "./data";
+import { getProjects } from "./data";
 
 
 export function getUniqueName(baseName) {
     // Filter only project names starting with the same base name
-    const similar = data.getProjects().map(p => p.name).filter(name => name.startsWith(baseName));
+    const similar = getProjects().map(p => p.name).filter(name => name.startsWith(baseName));
 
     if (similar.length === 0) return baseName;
 

@@ -1,6 +1,9 @@
 import { createSubTask, addSubTaskToScreen } from "./subTaskUI";
 import { makeEditable } from "../core/utils";
+import { ensureCompletion } from "./taskUI";
 
+
+/* ------------ Public API ------------ */
 
 export function showEditMenu(taskEl) {
   const dialog = createDialog();
@@ -31,7 +34,7 @@ export function showEditMenu(taskEl) {
 }
 
 
-/* ─── helpers ───────────────────────────────────────── */
+/* ------------ Internal Helpers ------------ */
 
 function createDialog() {
   const d = document.createElement("dialog");
@@ -73,6 +76,8 @@ function createCompleteBtn(task, taskEl, dialog) {
   btn.addEventListener("click", () => {
     task.completed = true;
     taskEl.querySelector(".check-box").checked = true;
+    closeAndSave(task, taskEl);
+    ensureCompletion(taskEl);
     dialog.close();
   });
   return btn;
@@ -83,11 +88,7 @@ function createCloseBtn(task, taskEl, dialog) {
   btn.textContent = "Close";
   btn.addEventListener("click", () => {
     taskEl.querySelector(".task-name").textContent = task.name;
-
-    const list = taskEl.querySelector(".sub-task-list");
-    if (list) list.innerHTML = "";
-
-    task.subTasks.forEach(sub => addSubTaskToScreen(sub, taskEl));
+    closeAndSave(task, taskEl);
     dialog.close();
   });
   return btn;
@@ -98,4 +99,11 @@ function populateSubTasks(dialog, task) {
     const subEl = createSubTask(sub);
     dialog.append(subEl);
   });
+}
+
+function closeAndSave(task, taskEl) {
+    const list = taskEl.querySelector(".sub-task-list");
+    if (list) list.innerHTML = "";
+
+    task.subTasks.forEach(sub => addSubTaskToScreen(sub, taskEl));
 }
