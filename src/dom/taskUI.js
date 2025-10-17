@@ -1,4 +1,4 @@
-import * as data from "../core/data";
+import { addTask } from "../core/data";
 import { showEditMenu } from "./editMenu";
 
 
@@ -8,7 +8,7 @@ export function addTasktoScreen(input, projectElement) {
   const name = input.value.trim();
   if (!name) return;
 
-  const task = data.addTask(name);
+  const task = addTask(name);
   const taskElement = createTaskElement(task, projectElement.projectObj);
 
   projectElement.projectObj.appendTask(task);
@@ -37,7 +37,7 @@ function createTaskInfo(task, projectObj, taskElement) {
   const info = document.createElement("div");
   info.classList.add("task-info");
 
-  const checkBox = createCheckbox(task);
+  const checkBox = createCheckbox(taskElement);
   const name = createName(task);
   const menuWrapper = createMenuButton(task, projectObj, taskElement);
 
@@ -45,12 +45,15 @@ function createTaskInfo(task, projectObj, taskElement) {
   return info;
 }
 
-function createCheckbox(task) {
+function createCheckbox(taskElement) {
   const box = document.createElement("input");
   box.type = "checkbox";
   box.classList.add("check-box");
-  box.checked = task.completed;
-  box.addEventListener("change", () => (task.completed = box.checked));
+  box.checked = taskElement.taskObj.completed;
+  box.addEventListener("change", () => {
+    taskElement.taskObj.completed = box.checked;
+    ensureCompletion(taskElement);
+  });
   return box;
 }
 
@@ -111,4 +114,17 @@ function toggleMenu(event, menu) {
   // toggle this one
   const open = menu.style.display === "block";
   menu.style.display = open ? "none" : "block";
+}
+
+function ensureCompletion(taskElement) {
+  const subElements = Array.from(taskElement.querySelectorAll(".sub-task"));
+  subElements.forEach(el => {
+    if (el && taskElement.taskObj.completed === true) {
+      el.subTaskObj.completed = true;
+      el.querySelector(".sub-check").checked = true;
+    } else {
+      el.subTaskObj.completed = false;
+      el.querySelector(".sub-check").checked = false;
+    }
+  });
 }

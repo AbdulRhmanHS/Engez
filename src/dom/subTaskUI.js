@@ -3,12 +3,12 @@
 export function createSubTask(subTask) {
   const el = document.createElement("div");
   el.classList.add("sub-task");
+  el.subTaskObj = subTask;
 
-  const check = createCheckbox(subTask);
+  const check = createCheckbox(el);
   const name = createNameField(subTask);
 
   el.append(check, name);
-  el.subTaskObj = subTask;
 
   return el;
 }
@@ -22,13 +22,15 @@ export function addSubTaskToScreen(subTask, container) {
 
 /* ─── helpers ────────────────────────────────────────────── */
 
-function createCheckbox(subTask) {
+function createCheckbox(subElement) {
   const check = document.createElement("input");
+  check.classList.add("sub-check");
   check.type = "checkbox";
-  check.checked = subTask.completed;
+  check.checked = subElement.subTaskObj.completed;
 
   check.addEventListener("change", () => {
-    subTask.completed = check.checked;
+    subElement.subTaskObj.completed = check.checked;
+    ensureCompletion(subElement);
   });
 
   return check;
@@ -112,4 +114,19 @@ function findTaskElement(subTask) {
   return Array.from(document.querySelectorAll(".task")).find(
     (el) => el.taskObj === subTask.parentTask
   );
+}
+
+function ensureCompletion(subElement) {
+  const taskElement = subElement.parentElement.parentElement;
+  const subElements = Array.from(taskElement.querySelectorAll(".sub-task"));
+  let isChecked = false;
+  if (subElements.every(el => el.subTaskObj.completed === true)) isChecked = true;
+
+  if (isChecked) {
+    taskElement.taskObj.completed = true;
+    taskElement.querySelector(".task-info").querySelector(".check-box").checked = true;
+  } else {
+    taskElement.taskObj.completed = false;
+    taskElement.querySelector(".task-info").querySelector(".check-box").checked = false;
+  }
 }

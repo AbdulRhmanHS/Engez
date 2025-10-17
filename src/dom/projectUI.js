@@ -1,4 +1,4 @@
-import * as data from "../core/data";
+import { addProject } from "../core/data";
 import { addTasktoScreen } from "./taskUI";
 import { makeEditable, getUniqueName } from "../core/utils";
 
@@ -6,7 +6,7 @@ import { makeEditable, getUniqueName } from "../core/utils";
 /* ------------ Public API ------------ */
 
 export function addProjecttoScreen() {
-  const project = data.addProject(getUniqueName("Default Project"));
+  const project = addProject(getUniqueName("Default Project"));
   createProjectElement(project);
 }
 
