@@ -53,3 +53,9 @@ export function makeEditable(editableEl, targetObj, property = "name") {
     }
   });
 }
+
+export function findTaskElement(obj) {
+  return Array.from(document.querySelectorAll(".task")).find(
+    (el) => el.taskObj === obj
+  );
+}

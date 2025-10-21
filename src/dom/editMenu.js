@@ -1,5 +1,6 @@
+import { timePrint } from "../core/data";
 import { createSubTask, addSubTaskToScreen } from "./subTaskUI";
-import { makeEditable } from "../core/utils";
+import { findTaskElement, makeEditable } from "../core/utils";
 import { ensureCompletion } from "./taskUI";
 
 
@@ -12,6 +13,7 @@ export function showEditMenu(taskEl) {
   const elements = {
     name: createNameField(task),
     note: createNoteField(task),
+    dueDate: createDateField(task),
     addSubTaskBtn: createAddSubTaskBtn(task, dialog),
     completeBtn: createCompleteBtn(task, taskEl, dialog),
     closeBtn: createCloseBtn(task, taskEl, dialog),
@@ -21,6 +23,7 @@ export function showEditMenu(taskEl) {
   dialog.append(
     elements.name,
     elements.note,
+    elements.dueDate,
     elements.addSubTaskBtn,
     elements.completeBtn,
     elements.closeBtn
@@ -56,6 +59,20 @@ function createNoteField(task) {
   el.value = task.note;
   el.addEventListener("input", () => {
     task.note = el.value;
+  });
+  return el;
+}
+
+function createDateField(task) {
+  const el = document.createElement("input");
+  el.type = "date";
+  el.value = task.dueDate;
+  el.addEventListener("input", () => {
+    task.dueDate = el.value;
+
+    const taskElement = findTaskElement(task);
+    const date = taskElement.querySelector(".task-info").querySelector(".task-date");
+    date.textContent = timePrint(task);
   });
   return el;
 }

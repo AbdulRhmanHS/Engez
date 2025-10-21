@@ -1,3 +1,5 @@
+import { findTaskElement } from "../core/utils";
+
 /* ------------ Public API ------------ */
 
 export function createSubTask(subTask) {
@@ -91,7 +93,7 @@ function ensureSubTaskList(container, subTask) {
 function maybeAddArrow(container, subTask) {
   if (!container.classList.contains("task-edit")) return;
 
-  const taskEl = findTaskElement(subTask);
+  const taskEl = findTaskElement(subTask.parentTask);
   if (!taskEl || taskEl.querySelector(".subtask-arrow")) return;
 
   const arrow = document.createElement("span");
@@ -108,14 +110,8 @@ function maybeAddArrow(container, subTask) {
   taskEl.querySelector(".task-info").prepend(arrow);
 }
 
-function findTaskElement(subTask) {
-  return Array.from(document.querySelectorAll(".task")).find(
-    (el) => el.taskObj === subTask.parentTask
-  );
-}
-
 function ensureCompletion(subTask) {
-  const taskEl = findTaskElement(subTask);
+  const taskEl = findTaskElement(subTask.parentTask);
   const subElements = Array.from(taskEl.querySelectorAll(".sub-task"));
   let isChecked = false;
   if (subElements.every(el => el.subTaskObj.completed === true)) isChecked = true;

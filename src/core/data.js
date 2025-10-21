@@ -1,3 +1,5 @@
+import { format, differenceInDays, isSameYear } from "date-fns";
+
 const projects = []; // Array to store projects
 
 
@@ -33,6 +35,7 @@ class Task {
         this.completed = false;
         this.note = "";
         this.subTasks = [];
+        this.dueDate = format(new Date(), "yyyy-MM-dd");
     }
 
     addSubTask(name) {
@@ -48,6 +51,13 @@ class Task {
     }
 }
 
+function getRemainingTime(task) {
+    const today = new Date();
+    const due = new Date(task.dueDate);
+
+    const remaining = differenceInDays(due, today);
+    return remaining;
+}
 
 export function addTask(name) {
     if (name == "") {
@@ -68,4 +78,16 @@ export function addProject(name) {
 
 export function getProjects() {
   return projects;
+}
+
+export function timePrint(task) {
+    const remaining = getRemainingTime(task);
+    const today = new Date();
+    const due = new Date(task.dueDate);
+
+    if (remaining === 0) return;
+    if (remaining === 1) return "Tomorrow";
+    if (remaining > 1 && remaining < 7) return format(due, "EEE");
+    if (remaining >= 7 && isSameYear(due, today)) return format(due, "d MMM");
+    return format(due, "yyyy-MM-dd");
 }
