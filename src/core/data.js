@@ -1,4 +1,4 @@
-import { format, differenceInDays, isSameYear } from "date-fns";
+import { format, differenceInCalendarDays, isSameYear } from "date-fns";
 
 const projects = []; // Array to store projects
 
@@ -55,7 +55,7 @@ function getRemainingTime(task) {
     const today = new Date();
     const due = new Date(task.dueDate);
 
-    const remaining = differenceInDays(due, today);
+    const remaining = differenceInCalendarDays(due, today);
     return remaining;
 }
 
