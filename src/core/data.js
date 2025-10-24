@@ -35,7 +35,7 @@ class Task {
         this.completed = false;
         this.note = "";
         this.subTasks = [];
-        this.dueDate = format(new Date(), "yyyy-MM-dd");
+        this.dueDate = "";
         this.time = "";
         this.priority = 0;
     }

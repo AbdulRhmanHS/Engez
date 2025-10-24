@@ -1,4 +1,4 @@
-import { addTask, timePrint } from "../core/data";
+import { addTask } from "../core/data";
 import { showEditMenu } from "./editMenu";
 
 
@@ -51,7 +51,7 @@ function createTaskInfo(task, projectObj, taskElement) {
 
   const checkBox = createCheckbox(taskElement);
   const name = createName(task);
-  const dueDate = createDate(task);
+  const dueDate = createDate();
   const time = createTime();
   const menuWrapper = createMenuButton(task, projectObj, taskElement);
 
@@ -78,10 +78,9 @@ function createName(task) {
   return name;
 }
 
-function createDate(task) {
+function createDate() {
   const date = document.createElement("span");
   date.classList.add("task-date");
-  date.textContent = timePrint(task);
   return date;
 }
 
