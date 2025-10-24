@@ -16,6 +16,7 @@ export function showEditMenu(taskEl) {
     note: createNoteField(task),
     dueDate: createDateField(task),
     time: createTimeField(task),
+    priority: createPriorityField(task),
     addSubTaskBtn: createAddSubTaskBtn(task, dialog),
     completeBtn: createCompleteBtn(task, taskEl, dialog),
     closeBtn: createCloseBtn(task, taskEl, dialog),
@@ -27,6 +28,7 @@ export function showEditMenu(taskEl) {
     elements.note,
     elements.dueDate,
     elements.time,
+    elements.priority,
     elements.addSubTaskBtn,
     elements.completeBtn,
     elements.closeBtn
@@ -85,16 +87,55 @@ function createTimeField(task) {
   el.addEventListener("input", () => {
     task.time = el.value;
 
-    const taskElement = findTaskElement(task);
-    const timeText = taskElement.querySelector(".task-info").querySelector(".task-time");
     const [hours, minutes] = el.value.split(":");
     const date = new Date();
     date.setHours(hours);
     date.setMinutes(minutes);
     date.setSeconds(0);
 
+    const taskElement = findTaskElement(task);
+    const timeText = taskElement.querySelector(".task-info").querySelector(".task-time");
     timeText.textContent = format(date, "h:mm a");
   });
+
+  return el;
+}
+
+function createPriorityField(task) {
+  const el = document.createElement("div");
+  el.classList.add("priority");
+
+  const label = document.createElement("label");
+  label.textContent = "Set priority ";
+  label.for = "priority";
+
+  const sel = document.createElement("select");
+  sel.id = "priority";
+
+  const op0 = document.createElement("option");
+  const op1 = document.createElement("option");
+  const op2 = document.createElement("option");
+  const op3 = document.createElement("option");
+  const op4 = document.createElement("option");
+
+  op0.value = 0;
+  op1.value = 1;
+  op2.value = 2;
+  op3.value = 3;
+  op4.value = 4;
+
+  op0.textContent = "Select";
+  op1.textContent = "1";
+  op2.textContent = "2";
+  op3.textContent = "3";
+  op4.textContent = "4";
+
+  sel.addEventListener("change", (e) => {
+    task.priority = e.target.value;
+  });
+
+  sel.append(op0, op1, op2, op3, op4);
+  el.append(label, sel);
 
   return el;
 }
