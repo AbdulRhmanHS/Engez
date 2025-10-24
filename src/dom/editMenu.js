@@ -2,6 +2,7 @@ import { timePrint } from "../core/data";
 import { createSubTask, addSubTaskToScreen } from "./subTaskUI";
 import { findTaskElement, makeEditable } from "../core/utils";
 import { ensureCompletion } from "./taskUI";
+import { format } from "date-fns";
 
 
 /* ------------ Public API ------------ */
@@ -14,6 +15,7 @@ export function showEditMenu(taskEl) {
     name: createNameField(task),
     note: createNoteField(task),
     dueDate: createDateField(task),
+    time: createTimeField(task),
     addSubTaskBtn: createAddSubTaskBtn(task, dialog),
     completeBtn: createCompleteBtn(task, taskEl, dialog),
     closeBtn: createCloseBtn(task, taskEl, dialog),
@@ -24,6 +26,7 @@ export function showEditMenu(taskEl) {
     elements.name,
     elements.note,
     elements.dueDate,
+    elements.time,
     elements.addSubTaskBtn,
     elements.completeBtn,
     elements.closeBtn
@@ -66,7 +69,6 @@ function createNoteField(task) {
 function createDateField(task) {
   const el = document.createElement("input");
   el.type = "date";
-  el.value = task.dueDate;
   el.addEventListener("input", () => {
     task.dueDate = el.value;
 
@@ -74,6 +76,26 @@ function createDateField(task) {
     const date = taskElement.querySelector(".task-info").querySelector(".task-date");
     date.textContent = timePrint(task);
   });
+  return el;
+}
+
+function createTimeField(task) {
+  const el = document.createElement("input");
+  el.type = "time";
+  el.addEventListener("input", () => {
+    task.time = el.value;
+
+    const taskElement = findTaskElement(task);
+    const timeText = taskElement.querySelector(".task-info").querySelector(".task-time");
+    const [hours, minutes] = el.value.split(":");
+    const date = new Date();
+    date.setHours(hours);
+    date.setMinutes(minutes);
+    date.setSeconds(0);
+
+    timeText.textContent = format(date, "h:mm a");
+  });
+
   return el;
 }
 

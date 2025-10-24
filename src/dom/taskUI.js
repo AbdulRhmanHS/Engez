@@ -52,9 +52,10 @@ function createTaskInfo(task, projectObj, taskElement) {
   const checkBox = createCheckbox(taskElement);
   const name = createName(task);
   const dueDate = createDate(task);
+  const time = createTime();
   const menuWrapper = createMenuButton(task, projectObj, taskElement);
 
-  info.append(checkBox, name, dueDate, menuWrapper);
+  info.append(checkBox, name, dueDate, time, menuWrapper);
   return info;
 }
 
@@ -81,6 +82,12 @@ function createDate(task) {
   const date = document.createElement("span");
   date.classList.add("task-date");
   date.textContent = timePrint(task);
+  return date;
+}
+
+function createTime() {
+  const date = document.createElement("span");
+  date.classList.add("task-time");
   return date;
 }
 
