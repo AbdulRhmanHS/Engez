@@ -148,9 +148,8 @@ function createCompleteBtn(task, taskEl, dialog) {
   btn.addEventListener("click", () => {
     task.completed = true;
     taskEl.querySelector(".check-box").checked = true;
-    closeAndSave(task, taskEl);
+    closeAndSave(task, taskEl, dialog);
     ensureCompletion(taskEl);
-    dialog.close();
   });
   return btn;
 }
@@ -159,8 +158,7 @@ function createCloseBtn(task, taskEl, dialog) {
   const btn = document.createElement("button");
   btn.textContent = "Close";
   btn.addEventListener("click", () => {
-    closeAndSave(task, taskEl);
-    dialog.close();
+    closeAndSave(task, taskEl, dialog);
   });
   return btn;
 }
@@ -172,11 +170,14 @@ function populateSubTasks(dialog, task) {
   });
 }
 
-function closeAndSave(task, taskEl) {
+function closeAndSave(task, taskEl, dialog) {
   taskEl.querySelector(".task-name").textContent = task.name;
 
   const list = taskEl.querySelector(".sub-task-list");
   if (list) list.innerHTML = "";
 
   task.subTasks.forEach(sub => addSubTaskToScreen(sub, taskEl));
+
+  dialog.close();
+  dialog.remove();
 }
