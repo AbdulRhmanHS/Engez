@@ -1,3 +1,8 @@
+:root {
+  --background-clr: rgb(238, 238, 238);
+  --task-clr: white;
+}
+
 /* ---------- Base Styles ---------- */
 
 html, body {
@@ -6,7 +11,7 @@ html, body {
   display: flex;
   flex-direction: column;
   align-items: center;
-  background-color: #fff;
+  background-color: var(--background-clr);
   font-family: "Open Sans", sans-serif;
   color: #333;
   margin: 0;
@@ -70,6 +75,9 @@ li {
 .task {
   display: flex;
   flex-direction: column;
+  background-color: var(--task-clr);
+  padding: 5px;
+  border-radius: 5px;
 }
 
 .task-info {
@@ -133,14 +141,13 @@ li {
 .subtask-arrow {
   cursor: pointer;
   user-select: none;
-  margin-right: -8px;
 }
 
 .sub-task-list {
   display: flex;
   flex-direction: column;
   gap: 2px;
-  margin-left: 18px;
+  margin-left: 40px;
   transition: all 0.2s ease;
 }
 

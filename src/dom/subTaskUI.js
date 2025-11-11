@@ -63,6 +63,7 @@ function createNameField(subTask) {
     if (!trimmed) {
       subTask.parentTask.deleteSubTask(subTask);
       name.parentElement.remove();
+      removeArrow(subTask);
     } else {
       name.contentEditable = false;
     }
@@ -124,4 +125,12 @@ function ensureCompletion(subTask) {
     taskEl.taskObj.completed = false;
     taskEl.querySelector(".task-info").querySelector(".check-box").checked = false;
   }
+}
+
+function removeArrow(subTask) {
+  const hasSubTasks = subTask.parentTask.subTasks.length > 0;
+  const taskEl = findTaskElement(subTask.parentTask);
+  const arrow = taskEl.querySelector(".subtask-arrow");
+
+  if (!hasSubTasks && arrow) arrow.remove();
 }

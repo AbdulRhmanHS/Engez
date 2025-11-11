@@ -179,9 +179,4 @@ function closeAndSave(task, taskEl) {
   if (list) list.innerHTML = "";
 
   task.subTasks.forEach(sub => addSubTaskToScreen(sub, taskEl));
-
-  if (!(task.subTasks.length > 0)) {
-    const arrow = taskEl.querySelector(".subtask-arrow");
-    arrow.remove();
-  }
 }
