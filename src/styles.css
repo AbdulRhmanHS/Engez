@@ -133,7 +133,7 @@ li {
 .subtask-arrow {
   cursor: pointer;
   user-select: none;
-  margin-right: 4px;
+  margin-right: -8px;
 }
 
 .sub-task-list {

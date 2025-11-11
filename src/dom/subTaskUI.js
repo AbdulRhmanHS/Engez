@@ -114,6 +114,7 @@ function ensureCompletion(subTask) {
   const taskEl = findTaskElement(subTask.parentTask);
   const subElements = Array.from(taskEl.querySelectorAll(".sub-task"));
   let isChecked = false;
+
   if (subElements.every(el => el.subTaskObj.completed === true)) isChecked = true;
 
   if (isChecked) {
