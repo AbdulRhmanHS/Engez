@@ -5,12 +5,13 @@
 
 /* ---------- Base Styles ---------- */
 
-html, body {
+body {
   height: 100vh;
   width: 100%;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
+  display: grid;
+  grid-template-columns: 1fr 5fr;
+  grid-template-rows: 1fr;
+  grid-template-areas: "sidebar tasks";
   background-color: var(--background-clr);
   font-family: "Open Sans", sans-serif;
   color: #333;
@@ -24,28 +25,40 @@ li {
 
 /* ---------- Layout ---------- */
 
+.sidebar {
+  grid-area: sidebar;
+  background-color: var(--task-clr);
+  padding: 0 15px;
+}
+
+.sidebar h3 {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  user-select: none;
+}
+
+#new-project {
+  border: none;
+  background: none;
+  font-size: 16px;
+  transform: translateY(10%);
+  cursor: pointer;
+}
+
 .task-area {
+  grid-area: tasks;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 40px;
+}
+
+.project {
   width: 100%;
   display: flex;
   flex-direction: column;
   align-items: center;
-}
-
-.project {
-  width: max(900px, 90%);
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-}
-
-.project-body {
-  width: 100%;
-  display: flex;
-  flex-direction: column;
-  gap: 5px;
-  padding: 10px 0;
-  border-top: 2px solid #333;
-  font-size: 18px;
   min-height: fit-content;
 }
 
@@ -53,8 +66,7 @@ li {
 /* ---------- Project ---------- */
 
 .project-name {
-  font-size: 24px;
-  font-weight: 700;
+  font-size: 16px;
   margin: 10px 0;
 }
 
@@ -64,6 +76,8 @@ li {
 }
 
 .project-task-list {
+  margin-top: 25px;
+  width: 100%;
   display: flex;
   flex-direction: column;
   gap: 5px;

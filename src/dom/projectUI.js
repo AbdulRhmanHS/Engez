@@ -11,20 +11,18 @@ export function addProjecttoScreen() {
 }
 
 export function createProjectElement(project) {
+  const sidebar = document.querySelector(".sidebar");
   const taskArea = document.querySelector(".task-area");
 
   // Base container
   const projectElement = document.createElement("div");
   projectElement.classList.add("project");
   projectElement.projectObj = project;
+  createProjectBody(projectElement);
 
-  // Name header
   const projectName = createEditableName(project);
 
-  // Body (input + task list)
-  const projectBody = createProjectBody(projectElement);
-
-  projectElement.append(projectName, projectBody);
+  sidebar.appendChild(projectName);
   taskArea.appendChild(projectElement);
 }
 
@@ -41,9 +39,6 @@ function createEditableName(project) {
 }
 
 function createProjectBody(projectElement) {
-  const body = document.createElement("div");
-  body.classList.add("project-body");
-
   const input = createTaskInput(projectElement);
   const button = createAddButton(projectElement, input);
 
@@ -54,8 +49,7 @@ function createProjectBody(projectElement) {
   const taskList = document.createElement("div");
   taskList.classList.add("project-task-list");
 
-  body.append(inputGroup, taskList);
-  return body;
+  projectElement.append(inputGroup, taskList);
 }
 
 function createTaskInput(projectElement) {
