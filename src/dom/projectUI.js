@@ -23,7 +23,7 @@ export function createProjectElement(project) {
   const projectName = createEditableName(project);
 
   sidebar.appendChild(projectName);
-  taskArea.appendChild(projectElement);
+  projectName.addEventListener("click", () => showProject(projectElement, taskArea));
 }
 
 
@@ -70,4 +70,10 @@ function createAddButton(projectElement, input) {
   btn.textContent = "Add Task";
   btn.addEventListener("click", () => addTasktoScreen(input, projectElement));
   return btn;
+}
+
+function showProject(projectElement, taskArea) {
+  if (taskArea) taskArea.innerHTML = '';
+
+  taskArea.append(projectElement);
 }

@@ -1,6 +1,7 @@
 :root {
   --background-clr: rgb(238, 238, 238);
   --task-clr: white;
+  --btn-clr: rgb(180, 179, 179);
 }
 
 /* ---------- Base Styles ---------- */
@@ -41,9 +42,11 @@ li {
 #new-project {
   border: none;
   background: none;
-  font-size: 16px;
+  font-size: 20px;
   transform: translateY(10%);
   cursor: pointer;
+  background-color: var(--btn-clr);
+  border-radius: 5px;
 }
 
 .task-area {
