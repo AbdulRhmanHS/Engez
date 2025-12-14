@@ -26,6 +26,7 @@ export function getUniqueName(baseName) {
 
 export function makeEditable(editableEl, targetObj, property = "name") {
   let previousValue = targetObj[property];
+  editableEl.contentEditable = true;
 
   // Update the object as user types
   editableEl.addEventListener("input", (e) => {
@@ -43,6 +44,8 @@ export function makeEditable(editableEl, targetObj, property = "name") {
       targetObj[property] = trimmed;
       previousValue = trimmed;
     }
+
+    editableEl.contentEditable = false;
   });
 
   // Prevent new lines, confirm edit with Enter

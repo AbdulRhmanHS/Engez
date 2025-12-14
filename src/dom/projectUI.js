@@ -23,7 +23,7 @@ export function createProjectElement(project) {
   const projectName = createEditableName(project);
 
   sidebar.appendChild(projectName);
-  projectName.addEventListener("click", () => showProject(projectElement, taskArea));
+  projectName.addEventListener("click", () => showProject(projectName, projectElement, taskArea));
 }
 
 
@@ -33,8 +33,9 @@ function createEditableName(project) {
   const el = document.createElement("p");
   el.classList.add("project-name");
   el.textContent = project.name;
-  el.contentEditable = true;
-  makeEditable(el, project);
+  el.addEventListener("dblclick", () => {
+    makeEditable(el, project);
+  });
   return el;
 }
 
@@ -72,8 +73,14 @@ function createAddButton(projectElement, input) {
   return btn;
 }
 
-function showProject(projectElement, taskArea) {
-  if (taskArea) taskArea.innerHTML = '';
+function showProject(projectName, projectElement, taskArea) {
 
+  if (taskArea) {
+    taskArea.innerHTML = '';
+    // Remove selection
+    Array.from(document.querySelectorAll(".project-name"), element => element.classList.remove("selected-project"));
+  }
+
+  projectName.classList.add("selected-project");
   taskArea.append(projectElement);
 }
