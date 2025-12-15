@@ -18,7 +18,13 @@ export function createSubTask(subTask) {
 export function addSubTaskToScreen(subTask, container) {
   const list = ensureSubTaskList(container, subTask);
   const el = createSubTask(subTask);
-  list.append(el);
+  const subTaskArea = container.querySelector(".dialog-sub-tasks");
+  if (subTaskArea) {
+    subTaskArea.append(el);
+  }
+  else {
+    list.append(el);
+  }
 }
 
 

@@ -17,21 +17,19 @@ export function showEditMenu(taskEl) {
     dueDate: createDateField(task),
     time: createTimeField(task),
     priority: createPriorityField(task),
-    addSubTaskBtn: createAddSubTaskBtn(task, dialog),
-    completeBtn: createCompleteBtn(task, taskEl, dialog),
-    closeBtn: createCloseBtn(task, taskEl, dialog),
+    addSubTaskBtn: createSubTaskField(task, dialog),
+    saveBtns: createSaveBtns(task, taskEl, dialog)
   };
 
   // main body
   dialog.append(
     elements.name,
-    elements.note,
     elements.dueDate,
     elements.time,
     elements.priority,
+    elements.note,
     elements.addSubTaskBtn,
-    elements.completeBtn,
-    elements.closeBtn
+    elements.saveBtns,
   );
 
   // existing subtasks
@@ -52,9 +50,9 @@ function createDialog() {
 
 function createNameField(task) {
   const el = document.createElement("span");
+  el.classList.add("dialog-name");
   el.textContent = task.name;
-  el.contentEditable = true;
-  makeEditable(el, task);
+  el.addEventListener("click", () => makeEditable(el, task));
   return el;
 }
 
@@ -69,27 +67,37 @@ function createNoteField(task) {
 }
 
 function createDateField(task) {
-  const el = document.createElement("input");
-  el.type = "date";
-  el.value = task.dueDate;
-  el.addEventListener("input", () => {
-    task.dueDate = el.value;
+  const text = document.createElement("p");
+  text.textContent = "Pick a date";
+
+  const dateEl = document.createElement("input");
+  dateEl.type = "date";
+  dateEl.value = task.dueDate;
+  dateEl.addEventListener("input", () => {
+    task.dueDate = dateEl.value;
 
     const taskElement = findTaskElement(task);
     const date = taskElement.querySelector(".task-info").querySelector(".task-date");
     date.textContent = timePrint(task);
   });
+
+  const el = document.createElement("div");
+  el.classList.add("date-field");
+  el.append(text, dateEl);
   return el;
 }
 
 function createTimeField(task) {
-  const el = document.createElement("input");
-  el.type = "time";
-  el.value = task.time;
-  el.addEventListener("input", () => {
-    task.time = el.value;
+  const text = document.createElement("p");
+  text.textContent = "Pick a time";
 
-    const [hours, minutes] = el.value.split(":");
+  const TimeEl = document.createElement("input");
+  TimeEl.type = "time";
+  TimeEl.value = task.time;
+  TimeEl.addEventListener("input", () => {
+    task.time = TimeEl.value;
+
+    const [hours, minutes] = TimeEl.value.split(":");
     const date = new Date();
     date.setHours(hours);
     date.setMinutes(minutes);
@@ -99,6 +107,10 @@ function createTimeField(task) {
     const timeText = taskElement.querySelector(".task-info").querySelector(".task-time");
     timeText.textContent = format(date, "h:mm a");
   });
+
+  const el = document.createElement("div");
+  el.classList.add("time-field");
+  el.append(text, TimeEl);
 
   return el;
 }
@@ -132,14 +144,30 @@ function createPriorityField(task) {
   return el;
 }
 
-function createAddSubTaskBtn(task, dialog) {
+function createSubTaskField(task, dialog) {
   const btn = document.createElement("button");
   btn.textContent = "Add a sub-task";
   btn.addEventListener("click", () => {
     const sub = task.addSubTask("Sub-task name");
     addSubTaskToScreen(sub, dialog);
   });
-  return btn;
+
+  const el = document.createElement("div");
+  el.classList.add("dialog-sub-tasks");
+  el.append(btn);
+  
+  return el;
+}
+
+function createSaveBtns(task, taskEl, dialog) {
+  const el = document.createElement("div");
+  el.classList.add("save-buttons");
+
+  const markAsComplete = createCompleteBtn(task, taskEl, dialog);
+  const close = createCloseBtn(task, taskEl, dialog);
+
+  el.append(markAsComplete, close);
+  return el;
 }
 
 function createCompleteBtn(task, taskEl, dialog) {
@@ -164,9 +192,10 @@ function createCloseBtn(task, taskEl, dialog) {
 }
 
 function populateSubTasks(dialog, task) {
+  const subTaskArea = dialog.querySelector(".dialog-sub-tasks");
   task.subTasks.forEach(sub => {
     const subEl = createSubTask(sub);
-    dialog.append(subEl);
+    subTaskArea.append(subEl);
   });
 }
 

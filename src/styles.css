@@ -181,9 +181,34 @@ li {
 /* ---------- Dialog / Edit ---------- */
 
 .task-edit {
+  display: flex;
+  flex-direction: column;
+  align-items: start;
+  gap: 10px;
   padding: 20px;
   border: none;
   border-radius: 8px;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25);
   background-color: #f9f9f9;
+}
+
+.task-edit p {
+  margin: 0;
+}
+
+.date-field, .time-field, .priority {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.dialog-name {
+  font-size: 28px;
+}
+
+.save-buttons {
+  margin-top: 40px;
+  align-self: center;
+  display: flex;
+  gap: 5px;
 }
