@@ -1,11 +1,11 @@
 import { addProject } from "../core/data";
-import { addTasktoScreen } from "./taskUI";
+import { addTaskToScreen } from "./taskUI";
 import { makeEditable, getUniqueName } from "../core/utils";
 
 
 /* ------------ Public API ------------ */
 
-export function addProjecttoScreen() {
+export function addProjectToScreen() {
   const project = addProject(getUniqueName("Default Project"));
   createProjectElement(project);
 }
@@ -60,7 +60,7 @@ function createTaskInput(projectElement) {
   input.classList.add("task-input");
   input.placeholder = "Enter task name";
   input.addEventListener("keydown", (e) => {
-    if (e.key === "Enter") addTasktoScreen(input, projectElement);
+    if (e.key === "Enter") addTaskToScreen(input, projectElement);
   });
   return input;
 }
@@ -69,7 +69,7 @@ function createAddButton(projectElement, input) {
   const btn = document.createElement("button");
   btn.classList.add("add-task-button");
   btn.textContent = "Add Task";
-  btn.addEventListener("click", () => addTasktoScreen(input, projectElement));
+  btn.addEventListener("click", () => addTaskToScreen(input, projectElement));
   return btn;
 }
 

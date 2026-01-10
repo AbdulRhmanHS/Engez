@@ -4,7 +4,7 @@ import { showEditMenu } from "./editMenu";
 
 /* ------------ Public API ------------ */
 
-export function addTasktoScreen(input, projectElement) {
+export function addTaskToScreen(input, projectElement) {
   const name = input.value.trim();
   if (!name) return;
 

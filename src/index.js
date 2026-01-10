@@ -1,13 +1,13 @@
 import "./styles.css";
 import { getProjects } from "./core/data";
-import { addProjecttoScreen } from "./dom/projectUI";
+import { addProjectToScreen } from "./dom/projectUI";
 
 
 const newProjectButton = document.getElementById("new-project");
-newProjectButton.addEventListener("click", addProjecttoScreen);
+newProjectButton.addEventListener("click", addProjectToScreen);
 window.getProjects = getProjects; // For testing only
 
 // Default project at first load
-addProjecttoScreen();
+addProjectToScreen();
 const firstProject = document.querySelector(".project-name");
 firstProject.click();
