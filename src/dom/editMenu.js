@@ -10,27 +10,11 @@ import { format } from "date-fns";
 export function showEditMenu(taskEl) {
   const dialog = createDialog();
   const task = taskEl.taskObj;
-
-  const elements = {
-    name: createNameField(task),
-    note: createNoteField(task),
-    dueDate: createDateField(task),
-    time: createTimeField(task),
-    priority: createPriorityField(task),
-    addSubTaskBtn: createSubTaskField(task, dialog),
-    saveBtns: createSaveBtns(task, taskEl, dialog)
-  };
+  const left = createLeftSection(task, dialog);
+  const right = createRightSection(task, taskEl, dialog);
 
   // main body
-  dialog.append(
-    elements.name,
-    elements.dueDate,
-    elements.time,
-    elements.priority,
-    elements.note,
-    elements.addSubTaskBtn,
-    elements.saveBtns,
-  );
+  dialog.append(left, right);
 
   // existing subtasks
   populateSubTasks(dialog, task);
@@ -48,6 +32,31 @@ function createDialog() {
   return d;
 }
 
+function createLeftSection(task, dialog) {
+  const el = document.createElement("div");
+  el.classList.add("dialog-left");
+
+  const name = createNameField(task);
+  const note = createNoteField(task);
+  const sub = createSubTaskField(task, dialog);
+
+  el.append(name, note, sub);
+  return el;
+}
+
+function createRightSection(task, taskEl, dialog) {
+  const el = document.createElement("div");
+  el.classList.add("dialog-right");
+
+  const date = createDateField(task);
+  const time = createTimeField(task);
+  const priority = createPriorityField(task);
+  const btns = createSaveBtns(task, taskEl, dialog);
+
+  el.append(date, time, priority, btns);
+  return el;
+}
+
 function createNameField(task) {
   const el = document.createElement("span");
   el.classList.add("dialog-name");
@@ -58,17 +67,25 @@ function createNameField(task) {
 
 function createNoteField(task) {
   const el = document.createElement("textarea");
+  el.classList.add("note");
   el.placeholder = "Note";
   el.value = task.note;
   el.addEventListener("input", () => {
     task.note = el.value;
   });
+
+  el.addEventListener("input", OnInput, false);
+
+  function OnInput() {
+    this.style.height = "auto"; // Reset height to get accurate scrollHeight
+    this.style.height = (this.scrollHeight) + "px"; // Set to content height
+  }
   return el;
 }
 
 function createDateField(task) {
   const text = document.createElement("p");
-  text.textContent = "Pick a date";
+  text.textContent = "Date";
 
   const dateEl = document.createElement("input");
   dateEl.type = "date";
@@ -89,7 +106,7 @@ function createDateField(task) {
 
 function createTimeField(task) {
   const text = document.createElement("p");
-  text.textContent = "Pick a time";
+  text.textContent = "Time";
 
   const TimeEl = document.createElement("input");
   TimeEl.type = "time";
@@ -120,7 +137,7 @@ function createPriorityField(task) {
   el.classList.add("priority");
 
   const label = document.createElement("label");
-  label.textContent = "Set priority ";
+  label.textContent = "Priority ";
   label.for = "priority";
 
   const sel = document.createElement("select");
@@ -146,7 +163,7 @@ function createPriorityField(task) {
 
 function createSubTaskField(task, dialog) {
   const btn = document.createElement("button");
-  btn.textContent = "Add a sub-task";
+  btn.textContent = "+ Add a sub-task";
   btn.addEventListener("click", () => {
     const sub = task.addSubTask("Sub-task name");
     addSubTaskToScreen(sub, dialog);
@@ -190,6 +207,8 @@ function createCloseBtn(task, taskEl, dialog) {
   });
   return btn;
 }
+
+/* ------------ More utilities ------------ */
 
 function populateSubTasks(dialog, task) {
   const subTaskArea = dialog.querySelector(".dialog-sub-tasks");
