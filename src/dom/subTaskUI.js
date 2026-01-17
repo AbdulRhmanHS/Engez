@@ -101,17 +101,18 @@ function maybeAddArrow(container, subTask) {
   if (!container.classList.contains("task-edit")) return;
 
   const taskEl = findTaskElement(subTask.parentTask);
+  // Check if arrow already exists to prevent duplicates
   if (!taskEl || taskEl.querySelector(".subtask-arrow")) return;
 
   const arrow = document.createElement("span");
-  arrow.textContent = "▶";
+  arrow.innerHTML = "<span>▶</span>"; // Wrapping for better rotation control
   arrow.classList.add("subtask-arrow");
 
-  arrow.addEventListener("click", () => {
-    const list = taskEl.querySelector(".sub-task-list");
-    const hidden = list.style.display === "none";
-    list.style.display = hidden ? "block" : "none";
-    arrow.textContent = hidden ? "▼" : "▶";
+  arrow.addEventListener("click", (e) => {
+    e.stopPropagation(); // Prevent triggering the main task click
+    
+    // Toggle the 'is-expanded' class on the parent task
+    taskEl.classList.toggle("is-expanded");
   });
 
   taskEl.querySelector(".task-info").prepend(arrow);

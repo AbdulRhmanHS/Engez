@@ -122,6 +122,12 @@ li {
   background-color: var(--task-clr);
   padding: 5px;
   border-radius: var(--border-radius);
+  transition: transform 0.35s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  transform-origin: center center;
+}
+
+.task:focus {
+  transform: scale(1.05);
 }
 
 .task-info {
@@ -184,17 +190,34 @@ li {
 
 /* ---------- Subtasks ---------- */
 
+/* The Arrow Styling */
 .subtask-arrow {
+  display: inline-block;
   cursor: pointer;
-  user-select: none;
+  margin-left: 2px;
+  transition: transform 0.2s ease-in-out;
+  font-size: 12px;
 }
 
+/* Rotate the arrow when expanded */
+.is-expanded .subtask-arrow {
+  transform: rotate(90deg); /* Smoothly turns the ▶ into a ▼ */
+}
+
+/* The Sub-task List Animation */
 .sub-task-list {
-  display: flex;
-  flex-direction: column;
-  gap: 2px;
-  margin-left: 40px;
-  transition: all 0.2s ease;
+  display: block !important;
+  max-height: 0;
+  overflow: hidden;
+  transition: max-height 0.3s ease;
+}
+
+.sub-task-list .sub-task {
+  margin-left: 30px;
+}
+
+.is-expanded .sub-task-list {
+  max-height: 500px; /* Set a value larger than your list height */
 }
 
 
