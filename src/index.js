@@ -9,5 +9,5 @@ window.getProjects = getProjects; // For testing only
 
 // Default project at first load
 addProjectToScreen();
-const firstProject = document.querySelector(".project-name");
+const firstProject = document.querySelector(".project-tab");
 firstProject.click();

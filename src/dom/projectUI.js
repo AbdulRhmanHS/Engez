@@ -1,4 +1,4 @@
-import { addProject } from "../core/data";
+import { addProject, deleteProject } from "../core/data";
 import { addTaskToScreen } from "./taskUI";
 import { makeEditable, getUniqueName } from "../core/utils";
 
@@ -20,22 +20,29 @@ export function createProjectElement(project) {
   projectElement.projectObj = project;
   createProjectBody(projectElement);
 
-  const projectName = createEditableName(project);
+  const projectTab = createProjectTab(project, projectElement);
 
-  sidebar.appendChild(projectName);
-  projectName.addEventListener("click", () => showProject(projectName, projectElement, taskArea));
+  sidebar.appendChild(projectTab);
+  projectTab.addEventListener("click", () => showProject(projectTab, projectElement, taskArea));
 }
 
 
 /* ------------ Internal Helpers ------------ */
 
-function createEditableName(project) {
-  const el = document.createElement("p");
-  el.classList.add("project-name");
-  el.textContent = project.name;
-  el.addEventListener("dblclick", () => {
+function createProjectTab(project, projectElement) {
+  const el = document.createElement("div");
+  el.classList.add("project-tab");
+
+  const name = document.createElement("p");
+  name.classList.add("project-name");
+  name.textContent = project.name;
+  name.addEventListener("dblclick", () => {
     makeEditable(el, project);
   });
+
+  const menu = createProjectMenuButton(project, projectElement);
+
+  el.append(name, menu);
   return el;
 }
 
@@ -73,14 +80,76 @@ function createAddButton(projectElement, input) {
   return btn;
 }
 
-function showProject(projectName, projectElement, taskArea) {
+function showProject(projectTab, projectElement, taskArea) {
 
   if (taskArea) {
     taskArea.innerHTML = '';
     // Remove selection
-    Array.from(document.querySelectorAll(".project-name"), element => element.classList.remove("selected-project"));
+    Array.from(document.querySelectorAll(".project-tab"), element => element.classList.remove("selected-project"));
   }
 
-  projectName.classList.add("selected-project");
+  projectTab.classList.add("selected-project");
   taskArea.append(projectElement);
+}
+
+function createProjectMenuButton(projectObj, projectElement) {
+  const btn = document.createElement("button");
+  btn.classList.add("project-menu-btn");
+  btn.textContent = "⋮";
+
+  const menu = buildProjectMenu(projectObj, projectElement);
+  btn.addEventListener("click", (e) => toggleMenu(e, menu));
+
+  const wrapper = document.createElement("div");
+  wrapper.classList.add("project-menu-wrapper");
+  wrapper.append(btn, menu);
+
+  return wrapper;
+}
+
+function buildProjectMenu(projectObj, projectElement) {
+  const menu = document.createElement("ul");
+  menu.classList.add("project-menu");
+  menu.style.display = "none";
+
+  const del = document.createElement("li");
+  del.textContent = "Delete";
+  
+  del.addEventListener("click", (e) => {
+    e.stopPropagation();
+    deleteProject(projectObj);
+
+    const allTabs = document.querySelectorAll(".project-tab");
+    allTabs.forEach(tab => {
+
+        if (tab.querySelector(".project-name").textContent === projectObj.name) {
+            tab.remove();
+        }
+    });
+
+    const taskArea = document.querySelector(".task-area");
+      if (taskArea && taskArea.contains(projectElement)) {
+          taskArea.innerHTML = '';
+      }
+
+    projectElement.remove();
+    menu.style.display = "none";
+
+  });
+
+  menu.append(del);
+  return menu;
+}
+
+function toggleMenu(event, menu) {
+  event.stopPropagation();
+
+  // close others
+  document.querySelectorAll(".project-menu").forEach((m) => {
+    if (m !== menu) m.style.display = "none";
+  });
+
+  // toggle this one
+  const open = menu.style.display === "block";
+  menu.style.display = open ? "none" : "block";
 }

@@ -47,9 +47,13 @@ li {
   font-size: 20px;
   transform: translateY(10%);
   cursor: pointer;
-  background-color: var(--btn-clr);
-  color: var(--task-clr);
+  background-color: var(--task-clr);
   border-radius: var(--border-radius);
+  transition: background-color 0.25s ease;
+}
+
+#new-project:hover {
+  background-color: var(--hover-clr);
 }
 
 .task-area {
@@ -71,12 +75,24 @@ li {
 
 /* ---------- Project ---------- */
 
-.project-name {
-  text-align: center;
-  padding: 5px;
+.project-tab {
+  display: flex;
+  justify-content: space-between;
+  padding: 1px;
   font-size: 14px;
   border-radius: var(--border-radius);
   user-select: none;
+}
+
+.project-name {
+  margin: 5px;
+}
+
+.project-menu-btn {
+  background-color: rgba(0, 0, 0, 0);
+  border: none;
+  color: var(--task-clr);
+  cursor: pointer;
 }
 
 .project-input {
@@ -145,7 +161,7 @@ li {
   flex: 1;
 }
 
-.task-menu-wrapper {
+.task-menu-wrapper, .project-menu-wrapper {
   position: relative;
   display: flex;
   align-items: center;
@@ -162,7 +178,7 @@ li {
 
 /* ---------- Task Menu ---------- */
 
-.task-menu {
+.task-menu, .project-menu {
   position: absolute;
   top: 100%;
   right: 0;
@@ -175,13 +191,14 @@ li {
   display: none;
 }
 
-.task-menu li {
+.task-menu li, .project-menu li {
   padding: 6px 12px;
   cursor: pointer;
   white-space: nowrap;
+  color: black;
 }
 
-.task-menu li:hover {
+.task-menu li:hover, .project-menu li:hover {
   background-color: var(--hover-clr);
   border-radius: var(--border-radius);
   transition: background-color 0.25s ease;
