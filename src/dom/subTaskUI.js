@@ -85,11 +85,6 @@ function ensureSubTaskList(container, subTask) {
     list = document.createElement("div");
     list.classList.add("sub-task-list");
 
-    // hidden by default (except in modal)
-    if (!container.classList.contains("task-edit")) {
-      list.style.display = "none";
-    }
-
     container.append(list);
     maybeAddArrow(container, subTask);
   }
@@ -110,9 +105,7 @@ function maybeAddArrow(container, subTask) {
 
   arrow.addEventListener("click", (e) => {
     e.stopPropagation(); // Prevent triggering the main task click
-    
-    // Toggle the 'is-expanded' class on the parent task
-    taskEl.classList.toggle("is-expanded");
+    arrowTransition(taskEl);
   });
 
   taskEl.querySelector(".task-info").prepend(arrow);
@@ -140,4 +133,31 @@ function removeArrow(subTask) {
   const arrow = taskEl.querySelector(".subtask-arrow");
 
   if (!hasSubTasks && arrow) arrow.remove();
+}
+
+function arrowTransition(taskEl) {
+  const list = taskEl.querySelector(".sub-task-list");
+  if (!list) return;
+
+  const isExpanding = !taskEl.classList.contains("is-expanded");
+  const height = list.scrollHeight;
+  
+  const baseSpeed = 200; // The minimum time in ms
+  const variableSpeed = height * 0.5; // Add only 0.5ms per pixel
+  
+  let duration = baseSpeed + variableSpeed;
+  
+  // Cap it so it doesn't get ridiculously slow for huge lists
+  duration = Math.min(duration, 400); 
+
+  list.style.transition = `max-height ${duration}ms ease-in-out`;
+
+  if (isExpanding) {
+    list.style.maxHeight = height + "px";
+    taskEl.classList.add("is-expanded");
+  } else {
+    // To avoid the "slow start" on shrink, we set it to 0
+    list.style.maxHeight = "0px";
+    taskEl.classList.remove("is-expanded");
+  }
 }
