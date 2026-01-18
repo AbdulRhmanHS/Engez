@@ -1,6 +1,6 @@
 import { addProject, deleteProject } from "../core/data";
 import { addTaskToScreen } from "./taskUI";
-import { makeEditable, getUniqueName } from "../core/utils";
+import { getUniqueName } from "../core/utils";
 
 
 /* ------------ Public API ------------ */
@@ -22,6 +22,8 @@ export function createProjectElement(project) {
 
   const projectTab = createProjectTab(project, projectElement);
 
+  projectElement.associatedTab = projectTab;
+
   sidebar.appendChild(projectTab);
   projectTab.addEventListener("click", () => showProject(projectTab, projectElement, taskArea));
 }
@@ -36,9 +38,6 @@ function createProjectTab(project, projectElement) {
   const name = document.createElement("p");
   name.classList.add("project-name");
   name.textContent = project.name;
-  name.addEventListener("dblclick", () => {
-    makeEditable(el, project);
-  });
 
   const menu = createProjectMenuButton(project, projectElement);
 
@@ -91,6 +90,8 @@ function showProject(projectTab, projectElement, taskArea) {
       element.classList.remove("selected-project");
       // Remove the menu
       element.querySelector(".project-menu-btn").style.display = "none";
+      // Close all the other menus
+      element.querySelector(".project-menu").style.display = "none";
     });
   }
 
@@ -120,20 +121,65 @@ function buildProjectMenu(projectObj, projectElement) {
   menu.classList.add("project-menu");
   menu.style.display = "none";
 
+  const rename = document.createElement("li");
+  rename.textContent = "Rename";
+  rename.addEventListener("click", (e) => {
+    e.stopPropagation();
+    menu.style.display = "none";
+
+    const tab = projectElement.associatedTab;
+    const nameP = tab.querySelector(".project-name");
+    
+    const nameInput = document.createElement("input");
+    nameInput.type = "text";
+    nameInput.classList.add("edit-project-name");
+    nameInput.value = nameP.textContent;
+
+    nameP.replaceWith(nameInput);
+    nameInput.focus();
+    nameInput.select();
+
+    // We use a flag to prevent the "Double Save"
+    let isSaved = false;
+
+    const saveName = () => {
+      if (isSaved) return; // If already saved by Enter, don't do it again on Blur
+      isSaved = true;
+
+      const newName = nameInput.value.trim();
+      if (newName !== "") {
+        projectObj.name = newName;
+        nameP.textContent = newName;
+      }
+      
+      // Check if nameInput is still in the DOM before replacing
+      if (nameInput.parentNode) {
+        nameInput.replaceWith(nameP);
+      }
+    };
+
+    nameInput.addEventListener("keydown", (k) => {
+      if (k.key === "Enter") {
+        saveName();
+      }
+      if (k.key === "Escape") {
+        isSaved = true; // Mark as handled
+        nameInput.replaceWith(nameP);
+      }
+    });
+
+    nameInput.addEventListener("blur", saveName);
+  });
+
   const del = document.createElement("li");
   del.textContent = "Delete";
-  
   del.addEventListener("click", (e) => {
     e.stopPropagation();
     deleteProject(projectObj);
 
-    const allTabs = document.querySelectorAll(".project-tab");
-    allTabs.forEach(tab => {
-
-        if (tab.querySelector(".project-name").textContent === projectObj.name) {
-            tab.remove();
-        }
-    });
+    if (projectElement.associatedTab) {
+      projectElement.associatedTab.remove();
+    }
 
     const taskArea = document.querySelector(".task-area");
       if (taskArea && taskArea.contains(projectElement)) {
@@ -142,20 +188,14 @@ function buildProjectMenu(projectObj, projectElement) {
 
     projectElement.remove();
     menu.style.display = "none";
-
   });
 
-  menu.append(del);
+  menu.append(rename, del);
   return menu;
 }
 
 function toggleMenu(event, menu) {
   event.stopPropagation();
-
-  // close others
-  document.querySelectorAll(".project-menu").forEach((m) => {
-    if (m !== menu) m.style.display = "none";
-  });
 
   // toggle this one
   const open = menu.style.display === "block";

@@ -77,7 +77,6 @@ li {
 
 .project-tab {
   display: flex;
-  justify-content: space-between;
   padding: 1px;
   font-size: 14px;
   border-radius: var(--border-radius);
@@ -88,11 +87,31 @@ li {
   margin: 5px;
 }
 
+.project-menu-wrapper {
+  margin-left: auto;
+}
+
 .project-menu-btn {
   background-color: rgba(0, 0, 0, 0);
   border: none;
   color: var(--task-clr);
   cursor: pointer;
+}
+
+.edit-project-name {
+  width: 80%;
+  font-size: 14px;
+  font-family: inherit;
+  border-radius: var(--border-radius);
+  border-color: rgba(255, 255, 255, 0);
+  padding: 3px;
+  outline: none;
+  background-color: var(--btn-clr);
+  color: var(--task-clr);
+}
+
+.edit-project-name:focus-visible {
+  outline: none;
 }
 
 .project-input {
