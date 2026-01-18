@@ -82,12 +82,19 @@ function createAddButton(projectElement, input) {
 
 function showProject(projectTab, projectElement, taskArea) {
 
+  const projectMenuButton = projectTab.querySelector(".project-menu-btn");
+
   if (taskArea) {
     taskArea.innerHTML = '';
     // Remove selection
-    Array.from(document.querySelectorAll(".project-tab"), element => element.classList.remove("selected-project"));
+    Array.from(document.querySelectorAll(".project-tab"), element => {
+      element.classList.remove("selected-project");
+      // Remove the menu
+      element.querySelector(".project-menu-btn").style.display = "none";
+    });
   }
 
+  projectMenuButton.style.display = "block"; // Add the menu only when the tab is selected
   projectTab.classList.add("selected-project");
   taskArea.append(projectElement);
 }
@@ -96,6 +103,7 @@ function createProjectMenuButton(projectObj, projectElement) {
   const btn = document.createElement("button");
   btn.classList.add("project-menu-btn");
   btn.textContent = "⋮";
+  btn.style.display = "none"; // Hidden by default
 
   const menu = buildProjectMenu(projectObj, projectElement);
   btn.addEventListener("click", (e) => toggleMenu(e, menu));
