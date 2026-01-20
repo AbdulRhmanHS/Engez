@@ -4,6 +4,8 @@
   --btn-clr: rgb(180, 179, 179);
   --hover-clr: #ddd;
   --border-radius: 0.3rem;
+  --sidebar-width: 280px;
+  --toggle-offset: 15px;
 }
 
 /* ---------- Base Styles ---------- */
@@ -11,10 +13,6 @@
 body {
   height: 100vh;
   width: 100%;
-  display: grid;
-  grid-template-columns: 1fr 5fr;
-  grid-template-rows: 1fr;
-  grid-template-areas: "sidebar tasks";
   background-color: var(--background-clr);
   font-family: "Open Sans", sans-serif;
   color: #333;
@@ -29,9 +27,38 @@ li {
 /* ---------- Layout ---------- */
 
 .sidebar {
-  grid-area: sidebar;
+  flex-shrink: 0;
+  width: var(--sidebar-width);
   background-color: var(--task-clr);
+  box-sizing: border-box;
   padding: 0 15px;
+  transition: transform 0.3s ease-in-out;
+  transform: translateX(0);
+  position: fixed;
+  left: 0;
+  top: 0;
+  height: 100%;
+}
+
+/* On wide screens it should hide if the user clicked only */
+.sidebar.hidden {
+  transform: translateX(-100%);
+}
+
+/* When open on mobile, it should slide in */
+.sidebar.active-mobile {
+  transform: translateX(0);
+}
+
+.title {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  user-select: none;
+}
+
+.title h1 {
+  margin: 10px 0;
 }
 
 .sidebar h3 {
@@ -39,6 +66,25 @@ li {
   justify-content: space-between;
   align-items: center;
   user-select: none;
+}
+
+/* Icon movement */
+#sidebar-toggle {
+  position: fixed;
+  top: 17px;
+  left: calc(var(--sidebar-width) - 46px); 
+  z-index: 1002;
+  transition: left 0.3s ease-in-out, transform 0.3s ease-in-out, background-color 0.25s ease;
+  display: flex;
+  padding: 5px;
+  background: none;
+  border: none;
+  border-radius: var(--border-radius);
+  cursor: pointer;
+}
+
+.sidebar.hidden + #sidebar-toggle {
+  left: var(--toggle-offset); /* Moves to the screen edge when collapsed */
 }
 
 #new-project {
@@ -52,16 +98,23 @@ li {
   transition: background-color 0.25s ease;
 }
 
-#new-project:hover {
+#new-project:hover, #sidebar-toggle:hover {
   background-color: var(--hover-clr);
 }
 
 .task-area {
-  grid-area: tasks;
+  width: auto;
+  flex-grow: 1;
+  margin-left: var(--sidebar-width);
+  transition: margin-left 0.3s ease-in-out;
   display: flex;
   flex-direction: column;
   align-items: center;
-  padding: 40px;
+  padding: 40px clamp(20px, 4vw, 40px);
+}
+
+.sidebar.hidden ~ .task-area {
+  margin-left: 0;
 }
 
 .project {
@@ -114,6 +167,11 @@ li {
   outline: none;
 }
 
+.greeting {
+  text-align: center;
+  margin-top: 40px;
+}
+
 .project-input {
   display: flex;
   gap: 5px;
@@ -160,11 +218,11 @@ li {
   border-radius: var(--border-radius);
 }
 
-.task-info {
+.task-info, .sub-task {
   position: relative;
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: 5px;
 }
 
 .check-box {
@@ -375,4 +433,49 @@ li {
 
 .dialog-sub-tasks .sub-task {
   margin-left: 10px;
+}
+
+
+/* --- Responsive Logic and Overlay --- */
+
+#sidebar-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  width: 100vw;
+  height: 100vh;
+  background-color: rgba(0, 0, 0, 0.5); /* Grayed out effect */
+  z-index: 999; /* Just below the toggle button and sidebar */
+  display: none; /* Hidden by default */
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+/* Show overlay when sidebar is NOT hidden on small screens */
+body.mobile-sidebar-open #sidebar-overlay {
+  display: block;
+  opacity: 1;
+}
+
+/* When sidebar is active on mobile, move the button WITH it */
+body.mobile-sidebar-open #sidebar-toggle {
+  left: calc(var(--sidebar-width) - 46px);
+}
+
+@media (max-width: 768px) {
+  .sidebar {
+    transform: translateX(-100%);
+    z-index: 1001; /* Above the overlay */
+  }
+
+  #sidebar-toggle {
+    /* On mobile start, it's at the screen edge because sidebar is at -100% */
+    left: var(--toggle-offset);
+  }
+
+  .task-area {
+    margin-left: 0 !important; /* Reclaim space on mobile */
+  }
 }

@@ -82,7 +82,6 @@ export function deleteProject(projectObj) {
     const index = projects.indexOf(projectObj);
     if (index !== -1) {
         projects.splice(index, 1);
-        console.log(`Project "${projectObj.name}" deleted from data.`);
         return true;
     }
     return false;

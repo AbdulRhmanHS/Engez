@@ -6,7 +6,7 @@ import { getUniqueName } from "../core/utils";
 /* ------------ Public API ------------ */
 
 export function addProjectToScreen() {
-  const project = addProject(getUniqueName("Default Project"));
+  const project = addProject(getUniqueName("Project"));
   createProjectElement(project);
 }
 
@@ -46,6 +46,7 @@ function createProjectTab(project, projectElement) {
 }
 
 function createProjectBody(projectElement) {
+  const greeting = createGreeting();
   const input = createTaskInput(projectElement);
   const button = createAddButton(projectElement, input);
 
@@ -56,7 +57,15 @@ function createProjectBody(projectElement) {
   const taskList = document.createElement("div");
   taskList.classList.add("project-task-list");
 
-  projectElement.append(inputGroup, taskList);
+  projectElement.append(greeting ,inputGroup, taskList);
+}
+
+function createGreeting() {
+  const el = document.createElement("h2");
+  el.classList.add("greeting");
+  el.textContent = "May Allah guide you to success!";
+
+  return el;
 }
 
 function createTaskInput(projectElement) {
