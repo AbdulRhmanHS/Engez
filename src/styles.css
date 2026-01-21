@@ -97,11 +97,15 @@ li {
   cursor: pointer;
   background-color: var(--task-clr);
   border-radius: var(--border-radius);
-  transition: background-color 0.25s ease;
+  transition: background-color 0.25s ease, transform 0.2s;
 }
 
 #new-project:hover, #sidebar-toggle:hover {
   background-color: var(--hover-clr);
+}
+
+#new-project:active {
+  transform: scale(0.95);
 }
 
 .task-area {
@@ -113,7 +117,8 @@ li {
   display: flex;
   flex-direction: column;
   align-items: center;
-  padding: 40px clamp(20px, 4vw, 40px);
+  padding: 40px 50px;
+  box-sizing: border-box;
 }
 
 .sidebar.hidden ~ .task-area {
@@ -200,7 +205,7 @@ li {
   padding: 5px;
   border-radius: var(--border-radius);
   border: 0.1px solid rgba(0, 0, 0, 0.253);
-  min-width: 160px;
+  min-width: 100px;
 }
 
 .add-task-button {
@@ -422,13 +427,11 @@ li {
 
 .save-buttons button {
   height: 24px;
+  background-color: var(--btn-clr);
+  color: var(--task-clr);
+  border: none;
   border-radius: var(--border-radius);
   cursor: pointer;
-}
-
-.save-buttons button {
-  border: var(--btn-clr) 1.5px solid;
-  background-color: var(--task-clr);
 }
 
 .dialog-sub-tasks button {
@@ -548,5 +551,51 @@ body.mobile-sidebar-open #sidebar-toggle {
 
   .task-area {
     margin-left: 0 !important; /* Reclaim space on mobile */
+  }
+}
+
+@media (max-width: 675px) {
+  .task-edit {
+    display: flex;
+    width: 90%;
+  }
+  
+  .dialog-left {
+    flex-grow: 1;
+  }
+
+  .save-buttons {
+    justify-content: start;
+  }
+}
+
+@media (max-width: 475px) {
+  .task-edit {
+    display: flex;
+    flex-direction: column;
+    max-height: initial;
+    max-width: initial;
+    height: 630px;
+  }
+
+  .project-input {
+    width: 100%;
+  }
+}
+
+@media (max-width: 400px) {
+  .task-edit {
+    height: 100%;
+    width: 100%;
+  }
+  .dialog-left {
+    flex-grow: 0;
+  }
+  .dialog-left, .note, .dialog-sub-tasks button  {
+    background-color: var(--task-clr);
+  }
+  .dialog-right {
+    justify-content: center;
+    flex-shrink: 0;
   }
 }
