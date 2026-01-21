@@ -50,7 +50,7 @@ function createRightSection(task, taskEl, dialog) {
 
   const date = createDateField(task);
   const time = createTimeField(task);
-  const priority = createPriorityField(task);
+  const priority = createPriorityField(task, taskEl);
   const btns = createSaveBtns(task, taskEl, dialog);
 
   el.append(date, time, priority, btns);
@@ -132,32 +132,46 @@ function createTimeField(task) {
   return el;
 }
 
-function createPriorityField(task) {
+function createPriorityField(task, taskEl) {
   const el = document.createElement("div");
   el.classList.add("priority");
 
   const label = document.createElement("label");
   label.textContent = "Priority ";
-  label.for = "priority";
+  label.setAttribute("for", "priority"); // Use setAttribute for 'for'
 
   const sel = document.createElement("select");
   sel.id = "priority";
 
-  const priorities = ["Select", 1, 2, 3, 4];
+  // Index 0: P1, Index 1: P2, Index 2: P3, Index 3: P4
+  const priorities = ["🟥 P1", "🟧 P2", "🟦 P3", "⬛ P4"];
+  
   priorities.forEach((p, i) => {
     const option = document.createElement("option");
-    option.value = i; // 0–4
+    option.value = i; 
     option.textContent = p;
     sel.appendChild(option);
   });
 
-  sel.value = String(task.priority ?? 0);
+  // CHANGE HERE: Fallback to '3' (P4) if task.priority is null/undefined
+  sel.value = String(task.priority ?? 3);
+
   sel.addEventListener("change", (e) => {
     task.priority = Number(e.target.value);
+
+    switch (task.priority) {
+      case 0: taskEl.querySelector(".task-name").style.color = "red";
+      break;
+      case 1: taskEl.querySelector(".task-name").style.color = "orange";
+      break;
+      case 2: taskEl.querySelector(".task-name").style.color = "blue";
+      break;
+      case 3: taskEl.querySelector(".task-name").style.color = "black";
+      break;
+    }
   });
 
   el.append(label, sel);
-
   return el;
 }
 

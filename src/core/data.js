@@ -37,7 +37,7 @@ class Task {
         this.subTasks = [];
         this.dueDate = "";
         this.time = "";
-        this.priority = 0;
+        this.priority = 3;
     }
 
     addSubTask(name) {

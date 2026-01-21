@@ -1,6 +1,7 @@
 import { addProject, deleteProject } from "../core/data";
 import { addTaskToScreen } from "./taskUI";
 import { getUniqueName } from "../core/utils";
+import emptyIllustration from "../assets/undraw_no-data_ig65.svg";
 
 
 /* ------------ Public API ------------ */
@@ -26,8 +27,20 @@ export function createProjectElement(project) {
 
   sidebar.appendChild(projectTab);
   projectTab.addEventListener("click", () => showProject(projectTab, projectElement, taskArea));
+  projectTab.click();
 }
 
+export function renderEmptyState() {
+  const taskArea = document.querySelector(".task-area");
+  taskArea.innerHTML = `
+    <div class="empty-state">
+      <img src="${emptyIllustration}" alt="No projects" />
+      <h2>Barakah starts with a plan</h2>
+      <p>Create a project to start your journey of Ihsan.</p>
+      <button onclick="document.getElementById('new-project').click()">Create Project</button>
+    </div>
+  `;
+}
 
 /* ------------ Internal Helpers ------------ */
 
@@ -184,19 +197,22 @@ function buildProjectMenu(projectObj, projectElement) {
   del.textContent = "Delete";
   del.addEventListener("click", (e) => {
     e.stopPropagation();
-    deleteProject(projectObj);
 
+    // Get all tabs from the sidebar BEFORE we remove the current one
+    const sidebar = document.querySelector(".sidebar");
+    const allTabs = Array.from(sidebar.querySelectorAll(".project-tab"));
+    const currentIndex = allTabs.indexOf(projectElement.associatedTab);
+
+    // 1. Delete from data and remove DOM elements
+    deleteProject(projectObj);
     if (projectElement.associatedTab) {
       projectElement.associatedTab.remove();
     }
-
-    const taskArea = document.querySelector(".task-area");
-      if (taskArea && taskArea.contains(projectElement)) {
-          taskArea.innerHTML = '';
-      }
-
     projectElement.remove();
     menu.style.display = "none";
+
+    // 2. A function to select the "previous" or "next" project
+    selectPreviousProject(currentIndex);
   });
 
   menu.append(rename, del);
@@ -209,4 +225,21 @@ function toggleMenu(event, menu) {
   // toggle this one
   const open = menu.style.display === "block";
   menu.style.display = open ? "none" : "block";
+}
+
+function selectPreviousProject(deletedIndex) {
+  const sidebar = document.querySelector(".sidebar");
+  const remainingTabs = sidebar.querySelectorAll(".project-tab");
+  const taskArea = document.querySelector(".task-area");
+
+  if (remainingTabs.length > 0) {
+    // Use the index we saved before deletion
+    const indexToSelect = Math.max(0, deletedIndex - 1);
+    remainingTabs[indexToSelect].click();
+  } else {
+    if (taskArea) {
+      taskArea.innerHTML = '';
+      renderEmptyState();
+    }
+  }
 }

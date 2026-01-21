@@ -3,6 +3,7 @@
   --task-clr: white;
   --btn-clr: rgb(180, 179, 179);
   --hover-clr: #ddd;
+  --hover-clr-2: #555;
   --border-radius: 0.3rem;
   --sidebar-width: 280px;
   --toggle-offset: 15px;
@@ -38,6 +39,7 @@ li {
   left: 0;
   top: 0;
   height: 100%;
+  overflow-y: auto;
 }
 
 /* On wide screens it should hide if the user clicked only */
@@ -103,6 +105,7 @@ li {
 }
 
 .task-area {
+  height: 100%;
   width: auto;
   flex-grow: 1;
   margin-left: var(--sidebar-width);
@@ -197,6 +200,7 @@ li {
   padding: 5px;
   border-radius: var(--border-radius);
   border: 0.1px solid rgba(0, 0, 0, 0.253);
+  min-width: 160px;
 }
 
 .add-task-button {
@@ -205,6 +209,16 @@ li {
   border-radius: var(--border-radius);
   border: none;
   cursor: pointer;
+  min-width: 70px;
+  transition: transform 0.2s, background-color 0.25s ease;
+}
+
+.add-task-button:hover {
+  background-color: var(--hover-clr-2);
+}
+
+.add-task-button:active {
+  transform: scale(0.95);
 }
 
 
@@ -433,6 +447,63 @@ li {
 
 .dialog-sub-tasks .sub-task {
   margin-left: 10px;
+}
+
+
+/* ---------- Empty State ---------- */
+
+.empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  height: 80%; /* Centers it vertically within the task-area */
+  padding: 20px;
+  animation: fadeIn 0.6s ease-out;
+}
+
+.empty-state img {
+  width: clamp(200px, 40vw, 400px); /* Responsive size */
+  margin-bottom: 2rem;
+  opacity: 0.8;
+}
+
+.empty-state h2 {
+  font-size: 1.8rem;
+  color: #333;
+  margin-bottom: 0.5rem;
+}
+
+.empty-state p {
+  font-size: 1.1rem;
+  color: #666;
+  margin-bottom: 1.5rem;
+}
+
+.empty-state button {
+  padding: 10px 20px;
+  background-color: var(--btn-clr);
+  color: var(--task-clr);
+  border: none;
+  border-radius: var(--border-radius);
+  cursor: pointer;
+  font-weight: bold;
+  transition: transform 0.2s, background-color 0.25s ease;
+}
+
+.empty-state button:hover {
+  background-color: var(--hover-clr-2); /* A bit darker for feedback */
+  transform: translateY(-2px);
+}
+
+.empty-state button:active {
+  transform: scale(0.95);
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
 }
 
 
