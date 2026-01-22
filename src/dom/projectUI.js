@@ -10,7 +10,8 @@ export function addProjectToScreen() {
   const currentProjectNames = getProjects().map(p => p.name);
   const uniqueName = getUniqueName("Project", currentProjectNames);
   const project = addProject(uniqueName);
-  createProjectElement(project);
+  const newEl = createProjectElement(project);
+  newEl.associatedTab.click();
 }
 
 export function createProjectElement(project) {
@@ -29,7 +30,6 @@ export function createProjectElement(project) {
 
   sidebar.appendChild(projectTab);
   projectTab.addEventListener("click", () => showProject(projectTab, projectElement, taskArea));
-  projectTab.click();
 
   return projectElement;
 }
@@ -120,6 +120,11 @@ function showProject(projectTab, projectElement, taskArea) {
       // Close all the other menus
       element.querySelector(".project-menu").style.display = "none";
     });
+
+    // Save the last selected project
+    const allTabs = Array.from(document.querySelectorAll(".project-tab"));
+    const currentIndex = allTabs.indexOf(projectTab);
+    localStorage.setItem("lastSelectedIndex", currentIndex);
   }
 
   projectMenuButton.style.display = "block"; // Add the menu only when the tab is selected

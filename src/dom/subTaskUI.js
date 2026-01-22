@@ -69,8 +69,21 @@ function createNameField(subTask, taskObj) {
   name.addEventListener("blur", () => {
     const trimmed = name.textContent.trim();
     if (!trimmed) {
-      taskObj.deleteSubTask(subTask);
-      name.parentElement.remove();
+      // 1. Delete from Data
+      if (taskObj && typeof taskObj.deleteSubTask === 'function') {
+        taskObj.deleteSubTask(subTask);
+      } else if (taskObj && taskObj.subTasks) {
+        const index = taskObj.subTasks.indexOf(subTask);
+        if (index !== -1) taskObj.subTasks.splice(index, 1);
+      }
+
+      // 2. Delete from UI - THE FIX
+      const subTaskContainer = name.closest(".sub-task");
+      if (subTaskContainer) {
+        subTaskContainer.remove();
+      }
+
+      // 3. Update the arrow
       removeArrow(taskObj);
     } else {
       name.contentEditable = false;
@@ -81,7 +94,7 @@ function createNameField(subTask, taskObj) {
 }
 
 
-function ensureSubTaskList(container, subTask, taskObj) {
+function ensureSubTaskList(container, taskObj) {
   let list = container.querySelector(".sub-task-list");
 
   if (!list) {
@@ -92,7 +105,7 @@ function ensureSubTaskList(container, subTask, taskObj) {
     list.style.overflow = "hidden"; 
 
     container.append(list);
-    maybeAddArrow(container, subTask, taskObj);
+    maybeAddArrow(container, taskObj);
   }
 
   return list;
@@ -105,7 +118,7 @@ function maybeAddArrow(container, taskObj) {
 
   if (!isMainTask && !isDialog) return;
 
-  const taskEl = findTaskElement(taskObj);
+  const taskEl = findTaskElement(taskObj, container.closest('.project') || container);
   if (!taskEl || taskEl.querySelector(".subtask-arrow")) return;
 
   const arrow = document.createElement("span");
@@ -140,11 +153,18 @@ function ensureCompletion(taskObj) {
 
 
 function removeArrow(taskObj) {
+  if (!taskObj || !taskObj.subTasks) return;
+
   const hasSubTasks = taskObj.subTasks.length > 0;
+  
   const taskEl = findTaskElement(taskObj);
+  if (!taskEl) return;
+
   const arrow = taskEl.querySelector(".subtask-arrow");
 
-  if (!hasSubTasks && arrow) arrow.remove();
+  if (!hasSubTasks && arrow) {
+    arrow.remove();
+  }
 }
 
 

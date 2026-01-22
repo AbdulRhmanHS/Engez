@@ -1,4 +1,5 @@
-import { addTask } from "../core/data";
+import { format } from "date-fns";
+import { addTask, timePrint } from "../core/data";
 import { showEditMenu } from "./editMenu";
 
 
@@ -51,11 +52,12 @@ function createTaskInfo(task, projectObj, taskElement) {
 
   const checkBox = createCheckbox(taskElement);
   const name = createName(task);
-  const dueDate = createDate();
-  const time = createTime();
+  const dueDate = createDate(task);
+  const time = createTime(task);
   const menuWrapper = createMenuButton(task, projectObj, taskElement);
 
   info.append(checkBox, name, dueDate, time, menuWrapper);
+  updatePriorityVisual(name, task.priority);
   return info;
 }
 
@@ -78,16 +80,27 @@ function createName(task) {
   return name;
 }
 
-function createDate() {
-  const date = document.createElement("span");
-  date.classList.add("task-date");
-  return date;
+function createDate(task) {
+  const dateEl = document.createElement("span");
+  dateEl.classList.add("task-date");
+  if (task.dueDate) {
+    dateEl.textContent = timePrint(task);
+  }
+  return dateEl;
 }
 
-function createTime() {
-  const date = document.createElement("span");
-  date.classList.add("task-time");
-  return date;
+function createTime(task) {
+  const timeEl = document.createElement("span");
+  timeEl.classList.add("task-time");
+
+  if (task.time) {
+    const [hours, minutes] = task.time.split(":");
+    const tempDate = new Date();
+    tempDate.setHours(parseInt(hours), parseInt(minutes), 0);
+    timeEl.textContent = format(tempDate, "h:mm a");
+  }
+  
+  return timeEl;
 }
 
 function createMenuButton(task, projectObj, taskElement) {
@@ -140,4 +153,17 @@ function toggleMenu(event, menu) {
   // toggle this one
   const open = menu.style.display === "block";
   menu.style.display = open ? "none" : "block";
+}
+
+
+function updatePriorityVisual(nameEl, priority) {
+    if (!nameEl) return;
+
+    switch (Number(priority)) {
+      case 0: nameEl.style.color = "red"; break;
+      case 1: nameEl.style.color = "orange"; break;
+      case 2: nameEl.style.color = "blue"; break;
+      case 3: nameEl.style.color = "black"; break;
+      default: nameEl.style.color = "black";
+    }
 }

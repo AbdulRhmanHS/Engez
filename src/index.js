@@ -28,6 +28,17 @@ async function initApp() {
         task.subTasks.forEach(sub => addSubTaskToScreen(sub, taskElement, task));
       });
     });
+
+    const allTabs = document.querySelectorAll(".project-tab");
+    if (allTabs.length > 0) {
+      // Retrieve the saved index, or default to 0 (the first one)
+      const savedIndex = localStorage.getItem("lastSelectedIndex");
+      const indexToClick = (savedIndex !== null && savedIndex < allTabs.length) 
+                           ? savedIndex 
+                           : 0;
+
+      allTabs[indexToClick].click();
+    }
   } else {
     renderEmptyState();
   }
