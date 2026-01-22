@@ -95,7 +95,7 @@ function createDateField(task) {
 
     const taskElement = findTaskElement(task);
     const date = taskElement.querySelector(".task-info").querySelector(".task-date");
-    date.textContent = timePrint(task);
+    task.dueDate ? date.textContent = timePrint(task) : date.textContent = "";
   });
 
   const el = document.createElement("div");
@@ -122,7 +122,7 @@ function createTimeField(task) {
 
     const taskElement = findTaskElement(task);
     const timeText = taskElement.querySelector(".task-info").querySelector(".task-time");
-    timeText.textContent = format(date, "h:mm a");
+    task.time ? timeText.textContent = format(date, "h:mm a") : timeText.textContent = "";
   });
 
   const el = document.createElement("div");

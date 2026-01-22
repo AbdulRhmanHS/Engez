@@ -24,6 +24,12 @@ li {
   list-style: none;
 }
 
+input[type="checkbox"].check-box,
+input[type="checkbox"].sub-check {
+  accent-color: var(--btn-clr);
+  cursor: pointer;
+}
+
 
 /* ---------- Layout ---------- */
 
@@ -453,6 +459,26 @@ li {
   margin-left: 10px;
 }
 
+input[type="date"],
+input[type="time"] {
+  width: 100%; /* Take full width of the container */
+  box-sizing: border-box; /* Ensure padding doesn't push it over */
+  font-family: inherit;
+  appearance: none; /* Remove some mobile default styling */
+  -webkit-appearance: none;
+  background-color: var(--task-clr);
+  border: 1px solid var(--btn-clr);
+  border-radius: var(--border-radius);
+  padding: 8px;
+  min-height: 24px;
+}
+
+.dialog-right .date-field,
+.dialog-right .time-field {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+}
 
 /* ---------- Empty State ---------- */
 
@@ -571,6 +597,11 @@ body.mobile-sidebar-open #sidebar-toggle {
 }
 
 @media (max-width: 475px) {
+  input[type="checkbox"].check-box,
+  input[type="checkbox"].sub-check {
+    width: 18px; /* Slightly bigger for better mobile tap */
+    height: 18px;
+  }
   .task-edit {
     display: flex;
     flex-direction: column;
@@ -595,5 +626,14 @@ body.mobile-sidebar-open #sidebar-toggle {
 
   .project-input {
     width: 100%;
+  }
+
+  input[type="date"],
+  input[type="time"] {
+    min-height: 40px;
+  }
+
+  .priority select {
+    height: 40px;
   }
 }
