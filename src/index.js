@@ -1,13 +1,56 @@
 import "./styles.css";
-import { getProjects } from "./core/data";
-import { addProjectToScreen, renderEmptyState } from "./dom/projectUI";
+import { getProjects, saveToDevice, loadFromDevice } from "./core/data";
+import { addProjectToScreen, createProjectElement, renderEmptyState } from "./dom/projectUI";
+import { createTaskElement } from "./dom/taskUI";
+import { addSubTaskToScreen } from "./dom/subTaskUI";
 
+
+// Saving data
+async function initApp() {
+  const data = await loadFromDevice();
+
+  if (data && data.length > 0) {
+    const taskArea = document.querySelector(".task-area");
+    if (taskArea) taskArea.innerHTML = ''; // Clear empty state
+
+    data.forEach(project => {
+      // 1. Create the project UI
+      const projectElement = createProjectElement(project);
+      
+      // 2. Find where tasks live in this element
+      const taskList = projectElement.querySelector(".project-task-list");
+
+      // 3. Render each task inside it
+      project.tasks.forEach(task => {
+        const taskElement = createTaskElement(task, project);
+        taskList.appendChild(taskElement);
+
+        task.subTasks.forEach(sub => addSubTaskToScreen(sub, taskElement, task));
+      });
+    });
+  } else {
+    renderEmptyState();
+  }
+}
+
+initApp();
+
+// Save before closing or reloading
+window.addEventListener("beforeunload", () => {
+  saveToDevice(getProjects());
+});
+
+
+// Save every 30 seconds
+setInterval(() => {
+    saveToDevice(getProjects());
+}, 30000);
+
+
+// The ability to add new projects
 const newProjectButton = document.getElementById("new-project");
 newProjectButton.addEventListener("click", addProjectToScreen);
-window.getProjects = getProjects; // For testing only
 
-// At start
-renderEmptyState();
 
 // Sidebar toggle
 document.addEventListener('DOMContentLoaded', () => {

@@ -140,6 +140,7 @@ li {
   display: flex;
   padding: 1px;
   font-size: 14px;
+  min-height: 29px;
   border-radius: var(--border-radius);
   user-select: none;
 }
@@ -575,27 +576,24 @@ body.mobile-sidebar-open #sidebar-toggle {
     flex-direction: column;
     max-height: initial;
     max-width: initial;
-    height: 630px;
+    height: 100%;
+    width: 100%;
+  }
+
+  .dialog-left {
+    flex-grow: 0;
+  }
+
+  .dialog-left, .note, .dialog-sub-tasks button  {
+    background-color: var(--task-clr);
+  }
+
+  .dialog-right {
+    justify-content: center;
+    flex-shrink: 0;
   }
 
   .project-input {
     width: 100%;
-  }
-}
-
-@media (max-width: 400px) {
-  .task-edit {
-    height: 100%;
-    width: 100%;
-  }
-  .dialog-left {
-    flex-grow: 0;
-  }
-  .dialog-left, .note, .dialog-sub-tasks button  {
-    background-color: var(--task-clr);
-  }
-  .dialog-right {
-    justify-content: center;
-    flex-shrink: 0;
   }
 }

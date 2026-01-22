@@ -1,25 +1,22 @@
-import { getProjects } from "./data";
-
-
-export function getUniqueName(baseName) {
-    // Filter only project names starting with the same base name
-    const similar = getProjects().map(p => p.name).filter(name => name.startsWith(baseName));
+export function getUniqueName(baseName, existingNames) {
+    // 1. Filter names that start with our base
+    const similar = existingNames.filter(name => name.startsWith(baseName));
 
     if (similar.length === 0) return baseName;
 
-    // Extract numbers from names like "Default Project (2)"
     let maxNumber = 1;
     similar.forEach(name => {
-      const match = name.match(/\((\d+)\)$/);
-      if (match) {
-          const num = parseInt(match[1]);
-          if (num > maxNumber) maxNumber = num;
-      } else if (name === baseName) {
-          // plain base name counts as (1)
-          maxNumber = Math.max(maxNumber, 1);
-      }
+        const match = name.match(/\((\d+)\)$/);
+        if (match) {
+            const num = parseInt(match[1]);
+            if (num > maxNumber) maxNumber = num;
+        } else if (name.trim() === baseName.trim()) {
+            // If the exact base name exists, we treat it as (1)
+            maxNumber = Math.max(maxNumber, 1);
+        }
     });
 
+    // If only the base name exists, return (2), otherwise max + 1
     return `${baseName} (${maxNumber + 1})`;
 }
 

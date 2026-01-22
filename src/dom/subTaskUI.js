@@ -2,22 +2,23 @@ import { findTaskElement } from "../core/utils";
 
 /* ------------ Public API ------------ */
 
-export function createSubTask(subTask) {
+export function createSubTask(subTask, taskObj) {
   const el = document.createElement("div");
   el.classList.add("sub-task");
   el.subTaskObj = subTask;
 
-  const check = createCheckbox(subTask);
-  const name = createNameField(subTask);
+  const check = createCheckbox(subTask, taskObj);
+  const name = createNameField(subTask, taskObj);
 
   el.append(check, name);
 
   return el;
 }
 
-export function addSubTaskToScreen(subTask, container) {
-  const list = ensureSubTaskList(container, subTask);
-  const el = createSubTask(subTask);
+
+export function addSubTaskToScreen(subTask, container, taskObj) {
+  const list = ensureSubTaskList(container, taskObj);
+  const el = createSubTask(subTask, taskObj);
   const subTaskArea = container.querySelector(".dialog-sub-tasks");
   if (subTaskArea) {
     subTaskArea.append(el);
@@ -30,7 +31,7 @@ export function addSubTaskToScreen(subTask, container) {
 
 /* ------------ Internal Helpers ------------ */
 
-function createCheckbox(subTask) {
+function createCheckbox(subTask, taskObj) {
   const check = document.createElement("input");
   check.classList.add("sub-check");
   check.type = "checkbox";
@@ -38,13 +39,14 @@ function createCheckbox(subTask) {
 
   check.addEventListener("change", () => {
     subTask.completed = check.checked;
-    ensureCompletion(subTask);
+    ensureCompletion(taskObj);
   });
 
   return check;
 }
 
-function createNameField(subTask) {
+
+function createNameField(subTask, taskObj) {
   const name = document.createElement("span");
   name.textContent = subTask.name;
 
@@ -67,9 +69,9 @@ function createNameField(subTask) {
   name.addEventListener("blur", () => {
     const trimmed = name.textContent.trim();
     if (!trimmed) {
-      subTask.parentTask.deleteSubTask(subTask);
+      taskObj.deleteSubTask(subTask);
       name.parentElement.remove();
-      removeArrow(subTask);
+      removeArrow(taskObj);
     } else {
       name.contentEditable = false;
     }
@@ -78,41 +80,50 @@ function createNameField(subTask) {
   return name;
 }
 
-function ensureSubTaskList(container, subTask) {
+
+function ensureSubTaskList(container, subTask, taskObj) {
   let list = container.querySelector(".sub-task-list");
 
   if (!list) {
     list = document.createElement("div");
     list.classList.add("sub-task-list");
+    // Explicitly set to 0 for the animation to work later
+    list.style.maxHeight = "0px"; 
+    list.style.overflow = "hidden"; 
 
     container.append(list);
-    maybeAddArrow(container, subTask);
+    maybeAddArrow(container, subTask, taskObj);
   }
 
   return list;
 }
 
-function maybeAddArrow(container, subTask) {
-  if (!container.classList.contains("task-edit")) return;
 
-  const taskEl = findTaskElement(subTask.parentTask);
-  // Check if arrow already exists to prevent duplicates
+function maybeAddArrow(container, taskObj) {
+  const isMainTask = container.classList.contains("task");
+  const isDialog = container.classList.contains("task-edit");
+
+  if (!isMainTask && !isDialog) return;
+
+  const taskEl = findTaskElement(taskObj);
   if (!taskEl || taskEl.querySelector(".subtask-arrow")) return;
 
   const arrow = document.createElement("span");
-  arrow.innerHTML = "<span>▶</span>"; // Wrapping for better rotation control
+  arrow.innerHTML = "<span>▶</span>"; 
   arrow.classList.add("subtask-arrow");
 
   arrow.addEventListener("click", (e) => {
-    e.stopPropagation(); // Prevent triggering the main task click
+    e.stopPropagation();
     arrowTransition(taskEl);
   });
 
-  taskEl.querySelector(".task-info").prepend(arrow);
+  const info = taskEl.querySelector(".task-info");
+  if (info) info.prepend(arrow);
 }
 
-function ensureCompletion(subTask) {
-  const taskEl = findTaskElement(subTask.parentTask);
+
+function ensureCompletion(taskObj) {
+  const taskEl = findTaskElement(taskObj);
   const subElements = Array.from(taskEl.querySelectorAll(".sub-task"));
   let isChecked = false;
 
@@ -127,13 +138,15 @@ function ensureCompletion(subTask) {
   }
 }
 
-function removeArrow(subTask) {
-  const hasSubTasks = subTask.parentTask.subTasks.length > 0;
-  const taskEl = findTaskElement(subTask.parentTask);
+
+function removeArrow(taskObj) {
+  const hasSubTasks = taskObj.subTasks.length > 0;
+  const taskEl = findTaskElement(taskObj);
   const arrow = taskEl.querySelector(".subtask-arrow");
 
   if (!hasSubTasks && arrow) arrow.remove();
 }
+
 
 function arrowTransition(taskEl) {
   const list = taskEl.querySelector(".sub-task-list");

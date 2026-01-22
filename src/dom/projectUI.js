@@ -1,4 +1,4 @@
-import { addProject, deleteProject } from "../core/data";
+import { addProject, deleteProject, getProjects } from "../core/data";
 import { addTaskToScreen } from "./taskUI";
 import { getUniqueName } from "../core/utils";
 import emptyIllustration from "../assets/undraw_no-data_ig65.svg";
@@ -7,7 +7,9 @@ import emptyIllustration from "../assets/undraw_no-data_ig65.svg";
 /* ------------ Public API ------------ */
 
 export function addProjectToScreen() {
-  const project = addProject(getUniqueName("Project"));
+  const currentProjectNames = getProjects().map(p => p.name);
+  const uniqueName = getUniqueName("Project", currentProjectNames);
+  const project = addProject(uniqueName);
   createProjectElement(project);
 }
 
@@ -28,6 +30,8 @@ export function createProjectElement(project) {
   sidebar.appendChild(projectTab);
   projectTab.addEventListener("click", () => showProject(projectTab, projectElement, taskArea));
   projectTab.click();
+
+  return projectElement;
 }
 
 export function renderEmptyState() {
@@ -84,6 +88,7 @@ function createGreeting() {
 function createTaskInput(projectElement) {
   const input = document.createElement("input");
   input.type = "text";
+  input.autocomplete = "off";
   input.name = "task-input";
   input.classList.add("task-input");
   input.placeholder = "Enter task name";

@@ -1,6 +1,6 @@
 import { timePrint } from "../core/data";
 import { createSubTask, addSubTaskToScreen } from "./subTaskUI";
-import { findTaskElement, makeEditable } from "../core/utils";
+import { findTaskElement, getUniqueName, makeEditable } from "../core/utils";
 import { ensureCompletion } from "./taskUI";
 import { format } from "date-fns";
 
@@ -179,8 +179,10 @@ function createSubTaskField(task, dialog) {
   const btn = document.createElement("button");
   btn.textContent = "+ Add a sub-task";
   btn.addEventListener("click", () => {
-    const sub = task.addSubTask("Sub-task name");
-    addSubTaskToScreen(sub, dialog);
+    const existingSubtaskNames = task.subTasks.map(s => s.name);
+    const uniqueName = getUniqueName("Sub-task", existingSubtaskNames);
+    const sub = task.addSubTask(uniqueName);
+    addSubTaskToScreen(sub, dialog, task);
   });
 
   const el = document.createElement("div");
@@ -238,7 +240,7 @@ function closeAndSave(task, taskEl, dialog) {
   const list = taskEl.querySelector(".sub-task-list");
   if (list) list.innerHTML = "";
 
-  task.subTasks.forEach(sub => addSubTaskToScreen(sub, taskEl));
+  task.subTasks.forEach(sub => addSubTaskToScreen(sub, taskEl, task));
 
   dialog.close();
   dialog.remove();

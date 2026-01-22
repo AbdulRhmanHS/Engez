@@ -1,6 +1,7 @@
 import { format, differenceInCalendarDays, isSameYear } from "date-fns";
+import { get, set } from "idb-keyval";
 
-const projects = []; // Array to store projects
+let projects = []; // Array to store projects
 
 
 class Project {
@@ -16,15 +17,6 @@ class Project {
     deleteTaskObj(task) {
         const i = this.tasks.indexOf(task);
         if (i !== -1) this.tasks.splice(i, 1);
-    }
-}
-
-
-class SubTask {
-    constructor(name, parentTask) {
-        this.name = name;
-        this.completed = false;
-        this.parentTask = parentTask;
     }
 }
 
@@ -53,6 +45,15 @@ class Task {
     }
 }
 
+
+class SubTask {
+    constructor(name) {
+        this.name = name;
+        this.completed = false;
+    }
+}
+
+
 function getRemainingTime(task) {
     const today = new Date();
     const due = new Date(task.dueDate);
@@ -60,6 +61,43 @@ function getRemainingTime(task) {
     const remaining = differenceInCalendarDays(due, today);
     return remaining;
 }
+
+
+export async function saveToDevice(projectsArray) {
+    await set("engez_projects", projectsArray);
+    console.log("Data is now safe on the hard drive!");
+}
+
+
+export async function loadFromDevice() {
+    const data = await get("engez_projects");
+    
+    if (!data) {
+        projects = [];
+        return [];
+    }
+
+    // REHYDRATION: Turn plain objects back into "Smart" Classes
+    projects = data.map(pData => {
+        const newProj = new Project(pData.name);
+        // Important: Rebuild the tasks as Task class instances too!
+        newProj.tasks = pData.tasks.map(tData => {
+            const newTask = new Task(tData.name);
+            // Copy all saved properties (completed, note, dates, etc.)
+            Object.assign(newTask, tData);
+
+            newTask.subTasks = (tData.subTasks || []).map(sData => {
+                const newSubTask = new SubTask(sData.name);
+                Object.assign(newSubTask, sData);
+                return newSubTask;
+            });
+            return newTask;
+        });
+        return newProj;
+    });
+    return projects;
+}
+
 
 export function addTask(name) {
     if (name == "") {
