@@ -1,33 +1,24 @@
-import js from "@eslint/js";
-import globals from "globals";
-import { defineConfig } from "eslint/config";
+import js from '@eslint/js';
+import globals from 'globals';
+import eslintConfigPrettier from 'eslint-config-prettier'; // 1. Import it
 
-export default defineConfig([
-  { 
-    // Lint all JS, MJS, CJS files
-    files: ["**/*.{js,mjs,cjs}"],
-
-    // Use the recommended JS rules
-    plugins: { js },
-    extends: ["js/recommended"],
-
-    // Browser globals by default
-    languageOptions: { 
-      globals: globals.browser, 
+export default [
+  js.configs.recommended, // 2. Use the standard recommended config
+  {
+    files: ['**/*.{js,mjs,cjs}'],
+    languageOptions: {
+      globals: globals.browser,
     },
-    
     rules: {
-      semi: ["error", "always"],
+      // 3. REMOVED the "semi" rule from here!
+      // Let Prettier handle the looks.
     },
   },
-  
-  // Node-specific files (webpack configs)
   {
-    files: ["webpack.*.js"],
-    plugins: { js },
-    extends: ["js/recommended"],
+    files: ['webpack.*.js'],
     languageOptions: {
       globals: { ...globals.node, ...globals.browser },
     },
   },
-]);
+  eslintConfigPrettier, // 4. ALWAYS put this last to override everything above!
+];

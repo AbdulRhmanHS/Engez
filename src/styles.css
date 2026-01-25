@@ -15,7 +15,7 @@ body {
   height: 100vh;
   width: 100%;
   background-color: var(--background-clr);
-  font-family: "Open Sans", sans-serif;
+  font-family: 'Open Sans', sans-serif;
   color: #333;
   margin: 0;
 }
@@ -24,12 +24,11 @@ li {
   list-style: none;
 }
 
-input[type="checkbox"].check-box,
-input[type="checkbox"].sub-check {
+input[type='checkbox'].check-box,
+input[type='checkbox'].sub-check {
   accent-color: var(--btn-clr);
   cursor: pointer;
 }
-
 
 /* ---------- Layout ---------- */
 
@@ -80,9 +79,12 @@ input[type="checkbox"].sub-check {
 #sidebar-toggle {
   position: fixed;
   top: 17px;
-  left: calc(var(--sidebar-width) - 46px); 
+  left: calc(var(--sidebar-width) - 46px);
   z-index: 1002;
-  transition: left 0.3s ease-in-out, transform 0.3s ease-in-out, background-color 0.25s ease;
+  transition:
+    left 0.3s ease-in-out,
+    transform 0.3s ease-in-out,
+    background-color 0.25s ease;
   display: flex;
   padding: 5px;
   background: none;
@@ -103,10 +105,13 @@ input[type="checkbox"].sub-check {
   cursor: pointer;
   background-color: var(--task-clr);
   border-radius: var(--border-radius);
-  transition: background-color 0.25s ease, transform 0.2s;
+  transition:
+    background-color 0.25s ease,
+    transform 0.2s;
 }
 
-#new-project:hover, #sidebar-toggle:hover {
+#new-project:hover,
+#sidebar-toggle:hover {
   background-color: var(--hover-clr);
 }
 
@@ -138,7 +143,6 @@ input[type="checkbox"].sub-check {
   align-items: center;
   min-height: fit-content;
 }
-
 
 /* ---------- Project ---------- */
 
@@ -222,7 +226,9 @@ input[type="checkbox"].sub-check {
   border: none;
   cursor: pointer;
   min-width: 70px;
-  transition: transform 0.2s, background-color 0.25s ease;
+  transition:
+    transform 0.2s,
+    background-color 0.25s ease;
 }
 
 .add-task-button:hover {
@@ -232,7 +238,6 @@ input[type="checkbox"].sub-check {
 .add-task-button:active {
   transform: scale(0.95);
 }
-
 
 /* ---------- Task ---------- */
 
@@ -244,7 +249,8 @@ input[type="checkbox"].sub-check {
   border-radius: var(--border-radius);
 }
 
-.task-info, .sub-task {
+.task-info,
+.sub-task {
   position: relative;
   display: flex;
   align-items: center;
@@ -259,7 +265,8 @@ input[type="checkbox"].sub-check {
   flex: 1;
 }
 
-.task-menu-wrapper, .project-menu-wrapper {
+.task-menu-wrapper,
+.project-menu-wrapper {
   position: relative;
   display: flex;
   align-items: center;
@@ -273,10 +280,10 @@ input[type="checkbox"].sub-check {
   padding: 4px;
 }
 
-
 /* ---------- Task Menu ---------- */
 
-.task-menu, .project-menu {
+.task-menu,
+.project-menu {
   position: absolute;
   top: 100%;
   right: 0;
@@ -289,22 +296,22 @@ input[type="checkbox"].sub-check {
   display: none;
 }
 
-.task-menu li, .project-menu li {
+.task-menu li,
+.project-menu li {
   padding: 6px 12px;
   cursor: pointer;
   white-space: nowrap;
   color: black;
 }
 
-.task-menu li:hover, .project-menu li:hover {
+.task-menu li:hover,
+.project-menu li:hover {
   background-color: var(--hover-clr);
   border-radius: var(--border-radius);
   transition: background-color 0.25s ease;
 }
 
-
 /* ---------- Subtasks ---------- */
-
 
 .subtask-arrow {
   display: inline-block;
@@ -328,7 +335,6 @@ input[type="checkbox"].sub-check {
 .sub-task-list .sub-task {
   margin-left: 30px;
 }
-
 
 /* ---------- Dialog / Edit ---------- */
 
@@ -391,17 +397,24 @@ input[type="checkbox"].sub-check {
   align-items: start;
 }
 
-.date-field, .time-field, .priority, .dialog-sub-tasks {
+.date-field,
+.time-field,
+.priority,
+.dialog-sub-tasks {
   display: flex;
   flex-direction: column;
   gap: 5px;
 }
 
-.date-field, .time-field, .priority {
+.date-field,
+.time-field,
+.priority {
   position: relative;
 }
 
-.date-field input, .time-field input, .priority select {
+.date-field input,
+.time-field input,
+.priority select {
   height: 20px;
   border: var(--btn-clr) 1.5px solid;
   border-radius: var(--border-radius);
@@ -413,8 +426,10 @@ input[type="checkbox"].sub-check {
   background-color: var(--task-clr);
 }
 
-.date-field::after, .time-field::after, .priority::after {
-  content: "";
+.date-field::after,
+.time-field::after,
+.priority::after {
+  content: '';
   position: absolute;
   left: 0;
   bottom: -15px;
@@ -459,8 +474,8 @@ input[type="checkbox"].sub-check {
   margin-left: 10px;
 }
 
-input[type="date"],
-input[type="time"] {
+input[type='date'],
+input[type='time'] {
   width: 100%; /* Take full width of the container */
   box-sizing: border-box; /* Ensure padding doesn't push it over */
   font-family: inherit;
@@ -519,7 +534,9 @@ input[type="time"] {
   border-radius: var(--border-radius);
   cursor: pointer;
   font-weight: bold;
-  transition: transform 0.2s, background-color 0.25s ease;
+  transition:
+    transform 0.2s,
+    background-color 0.25s ease;
 }
 
 .empty-state button:hover {
@@ -532,10 +549,15 @@ input[type="time"] {
 }
 
 @keyframes fadeIn {
-  from { opacity: 0; transform: translateY(10px); }
-  to { opacity: 1; transform: translateY(0); }
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
-
 
 /* --- Responsive Logic and Overlay --- */
 
@@ -586,7 +608,7 @@ body.mobile-sidebar-open #sidebar-toggle {
     display: flex;
     width: 90%;
   }
-  
+
   .dialog-left {
     flex-grow: 1;
   }
@@ -597,8 +619,8 @@ body.mobile-sidebar-open #sidebar-toggle {
 }
 
 @media (max-width: 475px) {
-  input[type="checkbox"].check-box,
-  input[type="checkbox"].sub-check {
+  input[type='checkbox'].check-box,
+  input[type='checkbox'].sub-check {
     width: 18px; /* Slightly bigger for better mobile tap */
     height: 18px;
   }
@@ -615,7 +637,9 @@ body.mobile-sidebar-open #sidebar-toggle {
     flex-grow: 0;
   }
 
-  .dialog-left, .note, .dialog-sub-tasks button  {
+  .dialog-left,
+  .note,
+  .dialog-sub-tasks button {
     background-color: var(--task-clr);
   }
 
@@ -628,8 +652,8 @@ body.mobile-sidebar-open #sidebar-toggle {
     width: 100%;
   }
 
-  input[type="date"],
-  input[type="time"] {
+  input[type='date'],
+  input[type='time'] {
     min-height: 40px;
   }
 

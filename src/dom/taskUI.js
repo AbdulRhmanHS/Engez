@@ -1,7 +1,6 @@
-import { format } from "date-fns";
-import { addTask, timePrint } from "../core/data";
-import { showEditMenu } from "./editMenu";
-
+import { format } from 'date-fns';
+import { addTask, timePrint } from '../core/data';
+import { showEditMenu } from './editMenu';
 
 /* ------------ Public API ------------ */
 
@@ -14,15 +13,15 @@ export function addTaskToScreen(input, projectElement) {
 
   projectElement.projectObj.appendTask(task);
 
-  const taskList = projectElement.querySelector(".project-task-list");
+  const taskList = projectElement.querySelector('.project-task-list');
   taskList.appendChild(taskElement);
 
-  input.value = "";
+  input.value = '';
 }
 
 export function createTaskElement(task, projectObj) {
-  const el = document.createElement("li");
-  el.classList.add("task");
+  const el = document.createElement('li');
+  el.classList.add('task');
   el.taskObj = task;
 
   const info = createTaskInfo(task, projectObj, el);
@@ -32,14 +31,14 @@ export function createTaskElement(task, projectObj) {
 }
 
 export function ensureCompletion(taskEl) {
-  const subElements = Array.from(taskEl.querySelectorAll(".sub-task"));
-  subElements.forEach(el => {
+  const subElements = Array.from(taskEl.querySelectorAll('.sub-task'));
+  subElements.forEach((el) => {
     if (el && taskEl.taskObj.completed === true) {
       el.subTaskObj.completed = true;
-      el.querySelector(".sub-check").checked = true;
+      el.querySelector('.sub-check').checked = true;
     } else {
       el.subTaskObj.completed = false;
-      el.querySelector(".sub-check").checked = false;
+      el.querySelector('.sub-check').checked = false;
     }
   });
 }
@@ -47,8 +46,8 @@ export function ensureCompletion(taskEl) {
 /* ------------ Internal Helpers ------------ */
 
 function createTaskInfo(task, projectObj, taskElement) {
-  const info = document.createElement("div");
-  info.classList.add("task-info");
+  const info = document.createElement('div');
+  info.classList.add('task-info');
 
   const checkBox = createCheckbox(taskElement);
   const name = createName(task);
@@ -62,11 +61,11 @@ function createTaskInfo(task, projectObj, taskElement) {
 }
 
 function createCheckbox(taskElement) {
-  const box = document.createElement("input");
-  box.type = "checkbox";
-  box.classList.add("check-box");
+  const box = document.createElement('input');
+  box.type = 'checkbox';
+  box.classList.add('check-box');
   box.checked = taskElement.taskObj.completed;
-  box.addEventListener("change", () => {
+  box.addEventListener('change', () => {
     taskElement.taskObj.completed = box.checked;
     ensureCompletion(taskElement);
   });
@@ -74,15 +73,15 @@ function createCheckbox(taskElement) {
 }
 
 function createName(task) {
-  const name = document.createElement("span");
-  name.classList.add("task-name");
+  const name = document.createElement('span');
+  name.classList.add('task-name');
   name.textContent = ` ${task.name} `;
   return name;
 }
 
 function createDate(task) {
-  const dateEl = document.createElement("span");
-  dateEl.classList.add("task-date");
+  const dateEl = document.createElement('span');
+  dateEl.classList.add('task-date');
   if (task.dueDate) {
     dateEl.textContent = timePrint(task);
   }
@@ -90,52 +89,52 @@ function createDate(task) {
 }
 
 function createTime(task) {
-  const timeEl = document.createElement("span");
-  timeEl.classList.add("task-time");
+  const timeEl = document.createElement('span');
+  timeEl.classList.add('task-time');
 
   if (task.time) {
-    const [hours, minutes] = task.time.split(":");
+    const [hours, minutes] = task.time.split(':');
     const tempDate = new Date();
     tempDate.setHours(parseInt(hours), parseInt(minutes), 0);
-    timeEl.textContent = format(tempDate, "h:mm a");
+    timeEl.textContent = format(tempDate, 'h:mm a');
   }
-  
+
   return timeEl;
 }
 
 function createMenuButton(task, projectObj, taskElement) {
-  const btn = document.createElement("button");
-  btn.classList.add("task-menu-btn");
-  btn.textContent = "⋮";
+  const btn = document.createElement('button');
+  btn.classList.add('task-menu-btn');
+  btn.textContent = '⋮';
 
   const menu = buildMenu(task, projectObj, taskElement);
-  btn.addEventListener("click", (e) => toggleMenu(e, menu));
+  btn.addEventListener('click', (e) => toggleMenu(e, menu));
 
-  const wrapper = document.createElement("div");
-  wrapper.classList.add("task-menu-wrapper");
+  const wrapper = document.createElement('div');
+  wrapper.classList.add('task-menu-wrapper');
   wrapper.append(btn, menu);
 
   return wrapper;
 }
 
 function buildMenu(task, projectObj, taskElement) {
-  const menu = document.createElement("ul");
-  menu.classList.add("task-menu");
-  menu.style.display = "none";
+  const menu = document.createElement('ul');
+  menu.classList.add('task-menu');
+  menu.style.display = 'none';
 
-  const edit = document.createElement("li");
-  edit.textContent = "Edit";
-  edit.addEventListener("click", () => {
+  const edit = document.createElement('li');
+  edit.textContent = 'Edit';
+  edit.addEventListener('click', () => {
     showEditMenu(taskElement);
-    menu.style.display = "none";
+    menu.style.display = 'none';
   });
 
-  const del = document.createElement("li");
-  del.textContent = "Delete";
-  del.addEventListener("click", () => {
+  const del = document.createElement('li');
+  del.textContent = 'Delete';
+  del.addEventListener('click', () => {
     projectObj.deleteTaskObj(task);
     taskElement.remove();
-    menu.style.display = "none";
+    menu.style.display = 'none';
   });
 
   menu.append(edit, del);
@@ -146,24 +145,32 @@ function toggleMenu(event, menu) {
   event.stopPropagation();
 
   // close others
-  document.querySelectorAll(".task-menu").forEach((m) => {
-    if (m !== menu) m.style.display = "none";
+  document.querySelectorAll('.task-menu').forEach((m) => {
+    if (m !== menu) m.style.display = 'none';
   });
 
   // toggle this one
-  const open = menu.style.display === "block";
-  menu.style.display = open ? "none" : "block";
+  const open = menu.style.display === 'block';
+  menu.style.display = open ? 'none' : 'block';
 }
 
-
 function updatePriorityVisual(nameEl, priority) {
-    if (!nameEl) return;
+  if (!nameEl) return;
 
-    switch (Number(priority)) {
-      case 0: nameEl.style.color = "red"; break;
-      case 1: nameEl.style.color = "orange"; break;
-      case 2: nameEl.style.color = "blue"; break;
-      case 3: nameEl.style.color = "black"; break;
-      default: nameEl.style.color = "black";
-    }
+  switch (Number(priority)) {
+    case 0:
+      nameEl.style.color = 'red';
+      break;
+    case 1:
+      nameEl.style.color = 'orange';
+      break;
+    case 2:
+      nameEl.style.color = 'blue';
+      break;
+    case 3:
+      nameEl.style.color = 'black';
+      break;
+    default:
+      nameEl.style.color = 'black';
+  }
 }
